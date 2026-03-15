@@ -47,6 +47,9 @@ class Game:
                     self.intro_active = False
                     self.menu_active = True
 
+                self.menu.handle_event(event)
+
+
     def draw(self):
         if self.intro_active:
             # Запускаем интро

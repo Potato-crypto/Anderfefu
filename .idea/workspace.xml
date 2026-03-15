@@ -4,21 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="95355c3c-6fe2-4a92-bb5c-31f96545ea3e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/Andertaile.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Main/Fonts/PublicPixel-rv0pA.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Main/GameLogic/Intro.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Main/GameLogic/MainMenu.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Main/Images/MainIcon.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Main/Settings/Settings.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Main/Sounds/ApperanceTitleSound.mp3" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Main/Sounds/PickSound.mp3" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Main/Sounds/StartIntroSound.mp3" afterDir="false" />
+    <list default="true" id="95355c3c-6fe2-4a92-bb5c-31f96545ea3e" name="Changes" comment="Файл для пуска">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main/GameLogic/Game.py" beforeDir="false" afterPath="$PROJECT_DIR$/Main/GameLogic/Game.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main/GameLogic/MainMenu.py" beforeDir="false" afterPath="$PROJECT_DIR$/Main/GameLogic/MainMenu.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,6 +24,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "Potato-crypto"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/Potato-crypto/Anderfefu",
+    "accountId": "1a22e52c-95d0-45b0-918c-e4fff565bca0"
+  }
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 3
 }</component>
@@ -50,6 +51,9 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "master",
     "last_opened_file_path": "C:/Users/Tomato/PycharmProjects/Andertaile/Main/Sounds"
+  },
+  "keyToStringList": {
+    "ChangesTree.GroupingKeys": []
   }
 }]]></component>
   <component name="RecentsManager">
@@ -108,6 +112,28 @@
       <option name="presentableId" value="Default" />
       <updated>1773465685500</updated>
     </task>
+    <task id="LOCAL-00001" summary="Начальное окно с анимацией">
+      <option name="closed" value="true" />
+      <created>1773575880888</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1773575880888</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Файл для пуска">
+      <option name="closed" value="true" />
+      <created>1773576367240</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1773576367240</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Начальное окно с анимацией" />
+    <MESSAGE value="Файл для пуска" />
+    <option name="LAST_COMMIT_MESSAGE" value="Файл для пуска" />
   </component>
 </project>
