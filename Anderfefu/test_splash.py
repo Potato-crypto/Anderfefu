@@ -7,7 +7,7 @@ def main():
     pygame.init()
     pygame.mixer.set_num_channels(64)
 
-    screen = pygame.display.set_mode((800, 600))
+    screen = pygame.display.set_mode((800, 600), pygame.FULLSCREEN | pygame.SCALED)
     pygame.display.set_caption("Заставка")
 
     splash = SplashScreen(screen)   

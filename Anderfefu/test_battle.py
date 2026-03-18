@@ -6,7 +6,7 @@ import random
 
 def main():
     pg.init()
-    screen = pg.display.set_mode((800, 600))
+    screen = pg.display.set_mode((800, 600), pg.FULLSCREEN | pg.SCALED)
     pg.display.set_caption("TEST ROOM with Health Bar")
     clock = pg.time.Clock()
 
@@ -14,13 +14,13 @@ def main():
         screen,
         main_buttons=["СПИСАТЬ", "ДЕЙСТВИЕ", "ПРЕДМЕТЫ", "ДУМАТЬ"],
         font_path="Anderfefu/fonts/SMB1NESClassix-Regular.otf",
-        font_size=10,
+        font_size=11,
         text_color=(255, 255, 255),
         button_outline_color=(255, 255, 255),
         button_bg_color=(0, 0, 0),
         bg_color=(0, 0, 0),
-        button_height=80,
-        button_spacing=20,
+        button_height=50,
+        button_spacing = 20,
         text_area_height=150,
         text_area_bottom_margin=3,
         max_hp=20,

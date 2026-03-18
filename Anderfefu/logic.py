@@ -1,7 +1,6 @@
 import pygame
 import sys
 import os
-import random
 
 '''
 НИЖЕ КЛАСС ДЛЯ ОТОБРАЖЕНИЯ ЗАСТАВКИ (test_splash.py АКТИВАЦИЯ ЗАСТАВКИ)
@@ -319,6 +318,10 @@ class SplashScreen:
 НИЖЕ КЛАСС ДЛЯ ИНИЦИАЛИЗАЦИИ БОЯ (test_battle.py АКТИВАЦИЯ БОЯ, ОШИБКИ ВОЗМОЖНО ЕСТЬ Я ХЗ)
 '''
 
+import pygame
+import os
+import math
+
 class BattleUI:
     ORANGE = (255, 165, 0)
 
@@ -336,13 +339,17 @@ class BattleUI:
                  text_area_height=150,
                  text_area_bg_color=None,
                  text_area_outline_color=None,
-                 text_area_bottom_margin=1,          # изменено с 3 на 1 для соблюдения отступов
+                 text_area_bottom_margin=1,
                  # Параметры шкалы здоровья
                  max_hp=20,
                  current_hp=20,
                  health_bar_height=15,
                  health_bar_color=(255, 255, 0),
-                 health_bar_outline=(255, 255, 255)):
+                 health_bar_outline=(255, 255, 255),
+                 # Параметры анимации урона
+                 damage_shake_duration=500,      # мс
+                 damage_shake_amplitude=10,      # пиксели
+                 damage_shake_frequency=0.02):   # рад/мс
 
         self.screen = screen
         self.screen_width = screen.get_width()
@@ -398,7 +405,7 @@ class BattleUI:
 
         self.original_main_buttons_y = self.main_button_rects[0].y
 
-        # --- Текстовая область (поднята на 5 пикселей, но с учётом нового bottom_margin) ---
+        # --- Текстовая область ---
         self.text_area_rect = pygame.Rect(
             self.button_spacing,
             start_y - self.text_area_height - health_bar_height - self.text_area_bottom_margin - 5,
@@ -412,9 +419,14 @@ class BattleUI:
         self.health_bar_height = health_bar_height
         self.health_bar_color = health_bar_color
         self.health_bar_outline = health_bar_outline
-
-        # Фиксированная ширина полосы здоровья (не меняется при сужении)
         self.fixed_health_bar_width = self.text_area_rect.width // 5
+
+        # --- Параметры анимации урона ---
+        self.damage_shake_duration = damage_shake_duration
+        self.damage_shake_amplitude = damage_shake_amplitude
+        self.damage_shake_frequency = damage_shake_frequency
+        self.damage_shake_active = False
+        self.damage_shake_start = 0
 
         self.popup_buttons = []
         self.popup_button_rects = []
@@ -433,7 +445,7 @@ class BattleUI:
 
         self.input_enabled = True
 
-    # ----- Методы для управления вводом -----
+    # ----- Управление вводом -----
     def enable_input(self):
         self.input_enabled = True
 
@@ -472,6 +484,7 @@ class BattleUI:
 
     # ----- Управление здоровьем -----
     def set_hp(self, current, max_hp=None):
+        old_hp = self.current_hp
         self.current_hp = current
         if max_hp is not None:
             self.max_hp = max_hp
@@ -480,8 +493,12 @@ class BattleUI:
         if self.current_hp > self.max_hp:
             self.current_hp = self.max_hp
 
+        # Если здоровье уменьшилось — запускаем анимацию
+        if self.current_hp < old_hp:
+            self.damage_shake_active = True
+            self.damage_shake_start = pygame.time.get_ticks()
+
     def set_health_bar_width(self, width):
-        """Устанавливает фиксированную ширину полосы здоровья (в пикселях)."""
         self.fixed_health_bar_width = width
 
     # ----- Всплывающие кнопки -----
@@ -616,24 +633,35 @@ class BattleUI:
 
         return -1
 
-    # ----- Отрисовка шкалы здоровья -----
+    # ----- Отрисовка шкалы здоровья с анимацией -----
     def _draw_health_bar(self):
-        # Вертикальное положение: через 3 пикселя после нижней границы текстовой области
         bar_y = self.text_area_rect.bottom + 4
         bar_height = self.health_bar_height
         bar_width = self.fixed_health_bar_width
 
-        # Центрирование относительно текущей текстовой области
-        bar_x = self.text_area_rect.centerx - bar_width // 2
+        # Центр без анимации
+        bar_x_center = self.text_area_rect.centerx - bar_width // 2
 
+        # Смещение из-за тряски
+        offset_x = 0
+        if self.damage_shake_active:
+            elapsed = pygame.time.get_ticks() - self.damage_shake_start
+            if elapsed < self.damage_shake_duration:
+                # Затухающая амплитуда
+                amp = self.damage_shake_amplitude * (1 - elapsed / self.damage_shake_duration)
+                offset_x = amp * math.sin(self.damage_shake_frequency * elapsed)
+            else:
+                self.damage_shake_active = False
+
+        bar_x = bar_x_center + offset_x
         bar_rect = pygame.Rect(bar_x, bar_y, bar_width, bar_height)
 
-        # Фон (чёрный)
+        # Фон
         pygame.draw.rect(self.screen, self.bg_color, bar_rect)
 
-        # Заливка здоровья с отступами 4 пикселя со всех сторон
+        # Заливка здоровья с отступами
         if self.max_hp > 0:
-            available_width = bar_width - 8  # слева и справа по 4
+            available_width = bar_width - 8
             fill_width = int((self.current_hp / self.max_hp) * available_width)
             if fill_width > 0:
                 fill_x = bar_x + 4
@@ -645,7 +673,7 @@ class BattleUI:
         # Рамка
         pygame.draw.rect(self.screen, self.health_bar_outline, bar_rect, 2)
 
-        # Текст HP слева от полосы (вертикально по центру)
+        # Текст HP слева
         hp_text = f"{self.current_hp} HP"
         text_surf = self.font.render(hp_text, True, self.text_color)
         text_x = bar_rect.left - text_surf.get_width() - 10
@@ -662,7 +690,7 @@ class BattleUI:
         pygame.draw.rect(self.screen, self.text_area_bg_color, self.text_area_rect)
         pygame.draw.rect(self.screen, self.text_area_outline_color, self.text_area_rect, 2)
 
-        # Текст
+        # Текст в области
         y = self.text_area_rect.y + 10
         for msg in self.current_messages[-self.max_messages:]:
             words = msg.split(' ')
