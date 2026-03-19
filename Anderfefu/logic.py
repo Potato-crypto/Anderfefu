@@ -1,6 +1,7 @@
 import pygame
 import sys
 import os
+import math
 
 '''
 НИЖЕ КЛАСС ДЛЯ ОТОБРАЖЕНИЯ ЗАСТАВКИ (test_splash.py АКТИВАЦИЯ ЗАСТАВКИ)
@@ -317,10 +318,6 @@ class SplashScreen:
 '''
 НИЖЕ КЛАСС ДЛЯ ИНИЦИАЛИЗАЦИИ БОЯ (test_battle.py АКТИВАЦИЯ БОЯ, ОШИБКИ ВОЗМОЖНО ЕСТЬ Я ХЗ)
 '''
-
-import pygame
-import os
-import math
 
 class BattleUI:
     ORANGE = (255, 165, 0)
