@@ -1,6 +1,7 @@
 from Main.GameLogic.Intro import Intro
 from Main.GameLogic.MainMenu import Menu
 from Main.Settings.Settings import *
+from logic import SplashScreen
 
 class Game:
     def __init__(self):
@@ -16,13 +17,21 @@ class Game:
         self.running = True
         self.clock = pg.time.Clock()
 
-        # Интро
+        # Интро компании
         self.intro = Intro("company", self.screen)
-        self.intro_active = True  # Флаг активности интро
 
-        #Меню
+        # Меню
         self.menu = Menu(self.screen)
-        self.menu_active = False # Флаг активности меню
+        # Сюжетное интро
+        self.splash = SplashScreen(self.screen)
+
+        # Флаги состояний
+        self.company_intro_active = True  # Интро компании активно
+        self.splash_intro_active = False  # Сюжетное интро не активно
+        self.menu_active = False  # Меню не активно
+
+        # Флаг для предотвращения повторного запуска сюжетного интро
+        self.splash_shown = False
 
     def update(self):
         pg.display.update()
@@ -41,28 +50,38 @@ class Game:
                         self.screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pg.FULLSCREEN)
                         self.full_screen = True
 
-                # Пропуск интро (клавиша пробел)
-                if self.intro_active and event.key == pg.K_SPACE:
-                    self.intro.active = False
-                    self.intro_active = False
-                    self.menu_active = True
+                # Пропуск интро компании (клавиша пробел)
+                if self.company_intro_active and event.key == pg.K_SPACE:
+                    self.company_intro_active = False
+                    self.splash_intro_active = True
 
-                self.menu.handle_event(event)
-
+                # Обработка событий меню только когда меню активно
+                if self.menu_active:
+                    self.menu.handle_event(event)
 
     def draw(self):
-        if self.intro_active:
-            # Запускаем интро
-            self.intro_active = self.intro.run()
-            if not self.intro_active:
-                self.menu_active = True
+        # Показываем интро команды
+        if self.company_intro_active:
+            self.company_intro_active = self.intro.run()
+            if not self.company_intro_active:
+                # Интро компании закончилось, запускаем сюжетное интро
+                self.splash_intro_active = True
 
+        # Показываем сюжетное интро
+        elif self.splash_intro_active and not self.splash_shown:
+            self.splash.show()
+            self.splash_shown = True
+            # После показа сюжетного интро активируем меню
+            self.menu_active = True
+            self.splash_intro_active = False
+
+        # Показываем меню
         elif self.menu_active:
             self.menu.run()
-        else:
-            # Здесь будет отрисовка основной игры
-            self.screen.fill(BACKGROUND_COLOR)  # Заливаем фон только когда интро закончилось
 
+        # Основная игра (пока пусто)
+        else:
+            self.screen.fill(BACKGROUND_COLOR)
 
     def run(self):
         while self.running:

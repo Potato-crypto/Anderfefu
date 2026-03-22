@@ -1,6 +1,8 @@
 from Main.Settings.Settings import *
+from Main.GameLogic.MainGameClasses import TiledMap, Camera, Player
 import random
 import math
+import os
 
 
 class Menu:
@@ -39,6 +41,7 @@ class Menu:
 
         # звук для items
         self.sound_items_effect = pg.mixer.Sound("../Sounds/PickSound.mp3")
+        self.sound_items_effect.set_volume(0.3)
 
         # Плавное дрожание
         self.shake_offset_x = 0
@@ -47,6 +50,12 @@ class Menu:
         self.base_speed = 0.1
         self.base_amount = 3
         self.random_variation = 0
+
+        # --- Переменные для игрового процесса ---
+        self.game_active = False  # Флаг активности игры
+        self.game_map = None
+        self.player = None
+        self.camera = None
 
     # Анимация всякая
     def update(self):
@@ -90,9 +99,8 @@ class Menu:
             self.shake_offset_x = (math.sin(self.shake_time) * self.base_amount) + self.random_variation
             self.shake_offset_y = math.cos(self.shake_time * 1.5) * 1.5  # Меньше по вертикали
 
-
     # Отрисовка items
-    def draw(self):
+    def draw_menu(self):
         if self.active:
             self.surface.fill(BACKGROUND_COLOR)
             self.surface.blit(self.title, self.rect_title)
@@ -122,33 +130,92 @@ class Menu:
                     self.surface.blit(text_surface, text_rect)
                     y_offset += 100
 
+    def start_game(self):
+        try:
+            # Получаем путь к директории, где находится скрипт
+            script_dir = os.path.dirname(os.path.abspath(__file__))
+
+            # Формируем полный путь к файлу карты (поднимаемся на уровень выше)
+            project_root = os.path.dirname(os.path.dirname(script_dir))
+            map_path = os.path.join(project_root, "map", "location1", "testlocation.tmx")
+
+
+            # Проверяем существование файла
+            if not os.path.exists(map_path):
+                print(f"Ошибка: файл карты не найден по пути {map_path}")
+                return False
+
+            # Создаем карту
+            self.game_map = TiledMap(map_path, scale=4)
+
+            # Находим спавн и создаем игрока
+            spawn_x, spawn_y = self.game_map.find_spawn()
+            self.player = Player(spawn_x, spawn_y, self.game_map)
+
+            # Создаем камеру
+            map_pixel_width = self.game_map.width * self.game_map.tilewidth
+            map_pixel_height = self.game_map.height * self.game_map.tileheight
+            self.camera = Camera(self.surface.get_width(), self.surface.get_height(),
+                                 map_pixel_width, map_pixel_height, scale=4)
+
+            return True
+
+        except Exception:
+            return False
+
+    def update_game(self):
+        if not self.game_active:
+            return
+
+        keys = pg.key.get_pressed()
+        self.player.update(keys)
+        self.camera.update(self.player.rect)
+
+    def draw_game(self):
+        if not self.game_active:
+            return
+
+        # Отрисовка карты и игрока
+        self.game_map.render(self.surface, self.camera)
+        self.player.render(self.surface, self.camera)
+
     def handle_event(self, event):
         if not self.active and not self.anim_completed:
             return
 
-        if event.key == pg.K_DOWN:
-            self.selected = (self.selected + 1) % len(self.items)
-            self.sound_items_effect.play()
+        if event.type == pg.KEYDOWN:
+            if event.key == pg.K_DOWN:
+                self.selected = (self.selected + 1) % len(self.items)
+                self.sound_items_effect.play()
 
-        if event.key == pg.K_UP:
-            self.selected = (self.selected - 1) % len(self.items)
-            self.sound_items_effect.play()
+            if event.key == pg.K_UP:
+                self.selected = (self.selected - 1) % len(self.items)
+                self.sound_items_effect.play()
 
-        if event.key == pg.K_KP_ENTER or event.key == pg.K_RETURN:
-            if self.selected == 0: # Нажали на кнопку START
-                pass
+            if event.key == pg.K_KP_ENTER or event.key == pg.K_RETURN:
+                if self.selected == 0:  # Нажали на кнопку START
+                    if self.start_game():
+                        self.active = False  # Деактивируем меню
+                        self.game_active = True  # Активируем игру
 
-            if self.selected == 1: # Нажали на кнопку SETTINGS
-                pass
+                if self.selected == 1:  # Нажали на кнопку SETTINGS
+                    # Здесь будет логика настроек
+                    pass
 
-            if self.selected == 2: # Нажали на кнопку EXIT
-                self.active = False
-                pg.quit()
-
+                if self.selected == 2:  # Нажали на кнопку EXIT
+                    self.active = False
+                    pg.quit()
+                    return
 
     def run(self):
-        if self.active:
-            self.draw()
+        if self.game_active:
+            # Если игра активна - обновляем и отрисовываем её
+            self.update_game()
+            self.draw_game()
+            return True
+        elif self.active:
+            # Если меню активно - отрисовываем меню
+            self.draw_menu()
             self.update()
             return True
         return False
