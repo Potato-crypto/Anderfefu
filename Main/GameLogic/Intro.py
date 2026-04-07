@@ -12,7 +12,7 @@ class Intro:
 
 
         # Звук прикольный
-        self.sound_effect = pg.mixer.Sound("../Sounds/StartIntroSound.mp3")
+        self.sound_effect = pg.mixer.Sound("Main/Sounds/your-best-nightmare.mp3")
         self.sound_played = False
 
         self.alpha = 0 # Начальная прозрачность текста
@@ -45,6 +45,7 @@ class Intro:
         elif self.alpha <= 0:
             self.alpha = 0
             self.active = False
+            self.sound_effect.stop()
 
         self.title.set_alpha(self.alpha)
 

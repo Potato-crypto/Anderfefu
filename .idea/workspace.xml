@@ -5,15 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="95355c3c-6fe2-4a92-bb5c-31f96545ea3e" name="Changes" comment="Файл для пуска">
-      <change afterPath="$PROJECT_DIR$/FEFUTale.code-workspace" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Main/Fonts/SMB1NESClassix-Regular.otf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Main/GameLogic/MainGameClasses.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/logic.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test_battle.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/testroom.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Main/Sounds/MenuBackgroundMusic.mp3" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Main/Sounds/eu-vou-dirigir-depois-de-beber.mp3" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Main/Sounds/oh-yes-undertale.mp3" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Main/Sounds/your-best-nightmare.mp3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Andertaile.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Andertaile.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Main/GameLogic/Game.py" beforeDir="false" afterPath="$PROJECT_DIR$/Main/GameLogic/Game.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main/GameLogic/Intro.py" beforeDir="false" afterPath="$PROJECT_DIR$/Main/GameLogic/Intro.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main/GameLogic/MainMenu.py" beforeDir="false" afterPath="$PROJECT_DIR$/Main/GameLogic/MainMenu.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main/Settings/Settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/Main/Settings/Settings.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,7 +47,6 @@
   &quot;associatedIndex&quot;: 3
 }</component>
   <component name="ProjectId" id="3AvGZTPs0DrQCpD1tdDcd0xy0MG" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -57,8 +57,11 @@
     "Python.test_splash.executor": "Run",
     "Python.testroom.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "C:/Users/Tomato/PycharmProjects/Andertaile/Main/Sounds"
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "soundBranch",
+    "last_opened_file_path": "C:/AnderFefu/Anderfefu/Main/Sounds",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   },
   "keyToStringList": {
     "ChangesTree.GroupingKeys": []
@@ -66,6 +69,7 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\AnderFefu\Anderfefu\Main\Sounds" />
       <recent name="C:\Users\Tomato\PycharmProjects\Andertaile\Main\Sounds" />
       <recent name="C:\Users\Tomato\PycharmProjects\Andertaile\Main\Images" />
     </key>
@@ -86,10 +90,12 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
+      <option name="SDK_NAME" value="Python 3.14 (PyCharmMiscProject)" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Main/GameLogic" />
-      <option name="IS_MODULE_SDK" value="true" />
+      <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="RUN_TOOL" value="" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Main/GameLogic/Game.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -112,6 +118,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="RUN_TOOL" value="" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test_splash.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -134,6 +141,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="RUN_TOOL" value="" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/testroom.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -154,7 +162,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-d7ad00fb9fc3-c546a90a8094-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-242.23726.102" />
+        <option value="bundled-python-sdk-ca5e2b39c7df-6e1f45a539f7-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-253.29346.308" />
       </set>
     </attachedChunks>
   </component>
