@@ -2,7 +2,7 @@ import pygame as pg
 pg.init()
 
 # Иконка главная
-MAIN_ICON_IMG = pg.image.load("../Images/MainIcon.png")
+MAIN_ICON_IMG = pg.image.load("Main/Images/MainIcon.png")
 
 FPS = 60
 # Размер экрана пользователя, для реализации полноэкранного режима
@@ -15,7 +15,7 @@ WINDOW_SIZE = (1080, 600)
 # Decorate
 BACKGROUND_COLOR = "Black"
 TEXT_COLOR = "White"
-MAIN_FONT = "../Fonts/PublicPixel-rv0pA.ttf"
+MAIN_FONT = "Main/Fonts/PublicPixel-rv0pA.ttf"
 
 # Для заставки (тип заставки: ее длительность)
 DURATIONS = \
