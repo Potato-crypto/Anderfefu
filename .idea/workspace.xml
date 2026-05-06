@@ -5,13 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="95355c3c-6fe2-4a92-bb5c-31f96545ea3e" name="Changes" comment="Файл для пуска">
-      <change afterPath="$PROJECT_DIR$/Main/GameLogic/PauseMenu.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Main/Sprites/Malishev_body.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Main/Sounds/long-typing-on-the-keyboard.mp3" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Main/Sounds/mus_ohyes_1.mp3" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Main/soundtrack/alexander-nakarada-chase(chosic.com).mp3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Andertaile.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Andertaile.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Main/GameLogic/Game.py" beforeDir="false" afterPath="$PROJECT_DIR$/Main/GameLogic/Game.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Main/GameLogic/MainGameClasses.py" beforeDir="false" afterPath="$PROJECT_DIR$/Main/GameLogic/MainGameClasses.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logic.py" beforeDir="false" afterPath="$PROJECT_DIR$/Main/GameLogic/logic.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_battle.py" beforeDir="false" afterPath="$PROJECT_DIR$/Main/GameLogic/test_battle.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main/GameLogic/MainMenu.py" beforeDir="false" afterPath="$PROJECT_DIR$/Main/GameLogic/MainMenu.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main/GameLogic/test_battle.py" beforeDir="false" afterPath="$PROJECT_DIR$/Main/GameLogic/test_battle.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,17 +40,16 @@
     &quot;assignee&quot;: &quot;Potato-crypto&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/Potato-crypto/Anderfefu.git&quot;,
-    &quot;accountId&quot;: &quot;1a22e52c-95d0-45b0-918c-e4fff565bca0&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/Potato-crypto/Anderfefu.git",
+    "accountId": "aee57797-8073-4ba5-809f-dc5f572f9e06"
   }
-}</component>
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 3
 }</component>
   <component name="ProjectId" id="3AvGZTPs0DrQCpD1tdDcd0xy0MG" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -62,8 +62,10 @@
     "Python.test_splash.executor": "Run",
     "Python.testroom.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "feature/test__boss__fight",
-    "last_opened_file_path": "C:/dev/game/Anderfefu"
+    "last_opened_file_path": "C:/AnderFefu/Anderfefu/Main/Sounds"
   },
   "keyToStringList": {
     "ChangesTree.GroupingKeys": []
@@ -71,6 +73,8 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\AnderFefu\Anderfefu\Main\Sounds" />
+      <recent name="C:\AnderFefu\Anderfefu\Main\soundtrack" />
       <recent name="C:\Users\Tomato\PycharmProjects\Andertaile\Main\Sounds" />
       <recent name="C:\Users\Tomato\PycharmProjects\Andertaile\Main\Images" />
     </key>
@@ -96,6 +100,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="RUN_TOOL" value="" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Main/GameLogic/Game.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -118,6 +123,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="RUN_TOOL" value="" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Main/GameLogic/test_battle.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -140,6 +146,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="RUN_TOOL" value="" />
       <option name="SCRIPT_NAME" value="C:\dev\game\Anderfefu\Main\GameLogic\test_battle.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -162,6 +169,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="RUN_TOOL" value="" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test_splash.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -184,6 +192,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="RUN_TOOL" value="" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/testroom.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -206,7 +215,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-d7ad00fb9fc3-c546a90a8094-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-242.23726.102" />
+        <option value="bundled-python-sdk-ca5e2b39c7df-6e1f45a539f7-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-253.29346.308" />
       </set>
     </attachedChunks>
   </component>

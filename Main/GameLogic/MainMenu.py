@@ -40,7 +40,7 @@ class Menu:
         self.fade_speed_item = 4
 
         # звук для items
-        self.sound_items_effect = pg.mixer.Sound("../Sounds/PickSound.mp3")
+        self.sound_items_effect = pg.mixer.Sound("../Sounds/mus_ohyes_1.mp3")
         self.sound_items_effect.set_volume(0.3)
 
         # Плавное дрожание

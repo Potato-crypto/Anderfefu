@@ -16,6 +16,37 @@ except ImportError:
 
 def main():
     pg.init()
+    pg.mixer.init()
+    #звуки
+    BATTLE_MUSIC_PATH = "../soundtrack/alexander-nakarada-chase(chosic.com).mp3"      # фоновая музыка боя
+    BOSS_SPEAK_SOUND_PATH = "../Sounds/long-typing-on-the-keyboard.mp3"   # звук при речи босса
+    BUTTON_CLICK_SOUND_PATH = "../Sounds/mus_ohyes_1.mp3"     # звук клика по кнопке
+
+    # Фоновая музыка (циклически)
+    try:
+        pg.mixer.music.load(BATTLE_MUSIC_PATH)
+        pg.mixer.music.set_volume(0.3)
+        pg.mixer.music.play(-1)
+    except Exception as e:
+        print("Не удалось загрузить фоновую музыку:", e)
+
+    # Звук речи босса
+    try:
+        boss_speak_sound = pg.mixer.Sound(BOSS_SPEAK_SOUND_PATH)
+        boss_speak_sound.set_volume(0.7)
+    except Exception as e:
+        print("Не удалось загрузить звук речи босса:", e)
+        boss_speak_sound = None
+
+    # Звук клика по кнопке
+    try:
+        button_click_sound = pg.mixer.Sound(BUTTON_CLICK_SOUND_PATH)
+        button_click_sound.set_volume(0.6)
+    except Exception as e:
+        print("Не удалось загрузить звук кнопки:", e)
+        button_click_sound = None
+
+
     info = pg.display.Info()
     screen_width = info.current_w
     screen_height = info.current_h
@@ -47,7 +78,7 @@ def main():
         health_bar_outline=(255, 255, 255),
     )
 
-    # --- СОЗДАНИЕ БОССА ---
+    # СОЗДАНИЕ БОССА
     boss = MalishevBoss(screen, battle_ui, UI_SCALE)
 
     boss_hp_max = 100
@@ -60,27 +91,26 @@ def main():
         "Уклоняйся от моих атак!",
         "Атакуй, когда будешь готов!"
     ])
+    if boss_speak_sound:
+        boss_speak_sound.play()
 
-    # --- СОСТОЯНИЯ БОЯ (как в оригинале) ---
+    #СОСТОЯНИЯ БОЯ
     STATE_MAIN = 0
     STATE_ACTION = 1
-    STATE_SHRINK_HOR = 2  # Анимация сжатия
-    STATE_BATTLE = 3  # Мини-игра
+    STATE_SHRINK_HOR = 2
+    STATE_BATTLE = 3
     current_state = STATE_MAIN
 
     act_buttons = ["ПОГОВОРИТЬ", "ПОЖАЛЕТЬ", "ПРОВЕРИТЬ", "НАЗАД"]
 
-    # --- НАСТРОЙКА РАЗМЕРОВ ПОЛЯ ---
+    #НАСТРОЙКА РАЗМЕРОВ ПОЛЯ
     original_buttons_y = battle_ui.original_main_buttons_y
     target_buttons_y = screen.get_height() + battle_ui.button_height
     original_text_rect = battle_ui.text_area_rect.copy()
 
-    # ШИРОКОЕ поле (когда выбираем действие)
-    WIDE_WIDTH = int(screen_width * 0.7)  # 70% ширины экрана
-    # УЗКОЕ поле (когда мини-игра)
-    NARROW_WIDTH = int(300 * UI_SCALE)  # Маленькое поле
+    WIDE_WIDTH = int(screen_width * 0.7)
+    NARROW_WIDTH = int(300 * UI_SCALE)
 
-    # Устанавливаем начальное ШИРОКОЕ поле
     screen_center_x = screen_width // 2
     battle_ui.text_area_rect.width = WIDE_WIDTH
     battle_ui.text_area_rect.centerx = screen_center_x
@@ -88,15 +118,13 @@ def main():
     original_center_x = original_text_rect.centerx
     original_width = WIDE_WIDTH
 
-    # Параметры анимации сжатия
-    shrink_duration = 500  # 500 мс на анимацию
+    shrink_duration = 500
     shrink_start_time = 0
     shrink_target_width = NARROW_WIDTH
 
     running = True
 
     def start_shrink_animation():
-        """Запускает анимацию сжатия поля"""
         nonlocal current_state, shrink_start_time
         current_state = STATE_SHRINK_HOR
         shrink_start_time = pg.time.get_ticks()
@@ -104,7 +132,6 @@ def main():
         battle_ui.disable_input()
 
     def start_boss_attack():
-        """Запускает бой после сжатия"""
         nonlocal current_state
 
         if boss.patterns[boss.phase]:
@@ -157,6 +184,11 @@ def main():
 
             result = battle_ui.handle_event(event)
 
+            # ЗВУК КЛИКА ПО КНОПКЕ
+            if result >= 0 or result >= 1000:
+                if button_click_sound:
+                    button_click_sound.play()
+
             if result == -2:  # ESC
                 if current_state == STATE_ACTION:
                     battle_ui.clear_popup_buttons()
@@ -179,6 +211,8 @@ def main():
                             "Покажи всё, чему научился!",
                             "WASD - твои лучшие друзья!"
                         ])
+                        if boss_speak_sound:
+                            boss_speak_sound.play()
                     elif boss_hp_current <= boss_hp_max * 0.6 and boss.phase == 1:
                         boss.phase = 2
                         battle_ui.add_message("ФАЗА 2!")
@@ -188,14 +222,18 @@ def main():
                             "Используй все клавиши WASD!",
                             "Двигайся по всей арене!"
                         ])
+                        if boss_speak_sound:
+                            boss_speak_sound.play()
 
                     if boss_hp_current > 0:
-                        start_shrink_animation()  # Запускаем анимацию сжатия
+                        start_shrink_animation()
                     else:
                         boss.show_dialogue([
                             "Как... Ты победил меня...",
                             "Ты отлично двигался, студент!"
                         ])
+                        if boss_speak_sound:
+                            boss_speak_sound.play()
                         pg.time.wait(3000)
                         running = False
 
@@ -207,6 +245,8 @@ def main():
                 elif result == 2:  # ПРЕДМЕТЫ
                     battle_ui.add_message("У тебя нет предметов.")
                     boss.show_dialogue(["Предметы? Здесь только твои навыки!"])
+                    if boss_speak_sound:
+                        boss_speak_sound.play()
 
                 elif result == 3:  # ПОЩАДА
                     if boss_hp_current < boss_hp_max // 2:
@@ -215,6 +255,8 @@ def main():
                                 "Хорошо, ты проявил милосердие...",
                                 "Ты научился не только сражаться!"
                             ])
+                            if boss_speak_sound:
+                                boss_speak_sound.play()
                             battle_ui.add_message("Ты пощадил Малышева!")
                             running = False
                         else:
@@ -222,12 +264,16 @@ def main():
                                 "Не дождёшься! Продолжай бой!",
                                 "Покажи свою силу!"
                             ])
+                            if boss_speak_sound:
+                                boss_speak_sound.play()
                     else:
                         battle_ui.add_message("Сначала ослабь врага!")
                         boss.show_dialogue([
                             "Сначала ослабь меня!",
                             "Моё HP должно быть ниже 50%"
                         ])
+                        if boss_speak_sound:
+                            boss_speak_sound.play()
 
             elif current_state == STATE_ACTION and result >= 1000:
                 action = act_buttons[result - 1000]
@@ -243,12 +289,16 @@ def main():
                             "Уклоняйся лучше!",
                             "WASD используй активно!"
                         ])
+                        if boss_speak_sound:
+                            boss_speak_sound.play()
                     elif action == "ПОЖАЛЕТЬ":
                         battle_ui.add_message("Ты проявляешь сострадание...")
                         boss.show_dialogue([
                             "Жалость? В бою нет жалости!",
                             "Но твоя доброта замечена..."
                         ])
+                        if boss_speak_sound:
+                            boss_speak_sound.play()
                     elif action == "ПРОВЕРИТЬ":
                         battle_ui.add_message(f"МАЛЫШЕВ - Обучающий босс (Фаза {boss.phase})")
                         battle_ui.add_message(boss_phase_hints[boss.phase])
@@ -256,7 +306,7 @@ def main():
 
                     current_state = STATE_MAIN
                     if boss_hp_current > 0:
-                        start_shrink_animation()  # Анимация сжатия
+                        start_shrink_animation()
 
         # Переключение диалогов по клику
         if mouse_clicked and boss.current_dialogue:
@@ -266,25 +316,22 @@ def main():
                 else:
                     boss.dialogue_done = True
 
-        # --- АНИМАЦИЯ СЖАТИЯ ПОЛЯ ---
+        # АНИМАЦИЯ СЖАТИЯ ПОЛЯ
         if current_state == STATE_SHRINK_HOR:
             elapsed = pg.time.get_ticks() - shrink_start_time
             progress = min(elapsed / shrink_duration, 1.0)
 
-            # Плавно уменьшаем ширину поля
             new_width = WIDE_WIDTH - (WIDE_WIDTH - NARROW_WIDTH) * progress
             battle_ui.text_area_rect.width = int(new_width)
             battle_ui.text_area_rect.centerx = original_center_x
 
-            # Плавно опускаем кнопки вниз
             new_y = original_buttons_y + (target_buttons_y - original_buttons_y) * progress
             battle_ui.set_main_buttons_y(new_y)
 
             if progress >= 1.0:
-                # Анимация завершена, запускаем бой
                 start_boss_attack()
 
-        # --- ОБНОВЛЕНИЕ ---
+        # ОБНОВЛЕНИЕ
         boss.update()
 
         if battle_ui.current_hp <= 0:
@@ -293,6 +340,8 @@ def main():
                 "Но ты можешь попробовать снова!",
                 "Помни: WASD - движение!"
             ])
+            if boss_speak_sound:
+                boss_speak_sound.play()
             battle_ui.add_message("ТЫ ПОВЕРЖЕН... GAME OVER")
             battle_ui.draw()
             pg.display.flip()
@@ -302,7 +351,6 @@ def main():
         # Завершение мини-игры
         if current_state == STATE_BATTLE and boss.current_minigame:
             if boss.current_minigame.is_finished():
-                # Восстанавливаем ШИРОКОЕ поле для выбора действий
                 battle_ui.text_area_rect.width = WIDE_WIDTH
                 battle_ui.text_area_rect.centerx = original_center_x
                 battle_ui.set_main_buttons_y(original_buttons_y)
@@ -314,6 +362,8 @@ def main():
                         "Хорошая реакция!",
                         "Продолжай в том же духе!"
                     ])
+                    if boss_speak_sound:
+                        boss_speak_sound.play()
                 else:
                     battle_ui.add_message("Ты получил урон...")
                     boss.show_dialogue([
@@ -321,11 +371,13 @@ def main():
                         "Двигайся активнее!",
                         "Используй WASD!"
                     ])
+                    if boss_speak_sound:
+                        boss_speak_sound.play()
 
                 boss.end_attack()
                 current_state = STATE_MAIN
 
-        # --- ОТРИСОВКА ---
+        # ОТРИСОВКА
         battle_ui.draw()
         boss.draw(screen)
 
