@@ -4,15 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="95355c3c-6fe2-4a92-bb5c-31f96545ea3e" name="Changes" comment="Файл для пуска">
-      <change afterPath="$PROJECT_DIR$/Main/Sounds/long-typing-on-the-keyboard.mp3" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Main/Sounds/mus_ohyes_1.mp3" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Main/soundtrack/alexander-nakarada-chase(chosic.com).mp3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Andertaile.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Andertaile.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="95355c3c-6fe2-4a92-bb5c-31f96545ea3e" name="Changes" comment="Готовый первый босс файт">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Main/GameLogic/MainMenu.py" beforeDir="false" afterPath="$PROJECT_DIR$/Main/GameLogic/MainMenu.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Main/GameLogic/test_battle.py" beforeDir="false" afterPath="$PROJECT_DIR$/Main/GameLogic/test_battle.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main/GameLogic/MainGameClasses.py" beforeDir="false" afterPath="$PROJECT_DIR$/Main/GameLogic/MainGameClasses.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,37 +34,38 @@
     &quot;assignee&quot;: &quot;Potato-crypto&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/Potato-crypto/Anderfefu.git",
-    "accountId": "aee57797-8073-4ba5-809f-dc5f572f9e06"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Potato-crypto/Anderfefu.git&quot;,
+    &quot;accountId&quot;: &quot;aee57797-8073-4ba5-809f-dc5f572f9e06&quot;
   }
-}]]></component>
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 3
 }</component>
   <component name="ProjectId" id="3AvGZTPs0DrQCpD1tdDcd0xy0MG" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.Game.executor": "Run",
-    "Python.test_battle (1).executor": "Run",
-    "Python.test_battle.executor": "Run",
-    "Python.test_splash.executor": "Run",
-    "Python.testroom.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "feature/test__boss__fight",
-    "last_opened_file_path": "C:/AnderFefu/Anderfefu/Main/Sounds"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.Game.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test_battle (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.test_battle.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test_splash.executor&quot;: &quot;Run&quot;,
+    &quot;Python.testroom.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feature/test__boss__fight&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/AnderFefu/Anderfefu/Main/Sounds&quot;
   },
-  "keyToStringList": {
-    "ChangesTree.GroupingKeys": []
+  &quot;keyToStringList&quot;: {
+    &quot;ChangesTree.GroupingKeys&quot;: []
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\AnderFefu\Anderfefu\Main\Sounds" />
@@ -100,7 +95,6 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="RUN_TOOL" value="" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Main/GameLogic/Game.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -123,7 +117,6 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="RUN_TOOL" value="" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Main/GameLogic/test_battle.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -146,7 +139,6 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="RUN_TOOL" value="" />
       <option name="SCRIPT_NAME" value="C:\dev\game\Anderfefu\Main\GameLogic\test_battle.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -169,7 +161,6 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="RUN_TOOL" value="" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test_splash.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -192,7 +183,6 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="RUN_TOOL" value="" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/testroom.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -269,6 +259,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Начальное окно с анимацией" />
     <MESSAGE value="Файл для пуска" />
-    <option name="LAST_COMMIT_MESSAGE" value="Файл для пуска" />
+    <MESSAGE value="Готовый первый босс файт" />
+    <option name="LAST_COMMIT_MESSAGE" value="Готовый первый босс файт" />
   </component>
 </project>

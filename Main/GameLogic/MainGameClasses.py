@@ -1,6 +1,3 @@
-import math
-import pygame
-import random
 import xml.etree.ElementTree as ET
 import csv
 import os
@@ -309,14 +306,13 @@ class MalishevBoss:
 
         self.cur_pattern = None
 
-        self.patterns = {
-            1: ["Движение стены", "Кости из пола", "Базовая атака"],
-            2: ["Движение стены", "Кости из пола", "Ядовитое облако", "Ледяные шипы", "Базовая атака"],
-            3: ["Движение стены", "Кости из пола", "Ядовитое облако", "Ледяные шипы", "Призыв миньонов",
-                "Базовая атака"]
+        patterns = {
+            1: ["Летающие книги", "Экзаменационные листы", "Лазерная указка"],
+            2: ["Летающие книги", "Экзаменационные листы", "Лазерная указка", "Стена дедлайна", "Падающие листы"],
+            3: ["Летающие книги", "Экзаменационные листы", "Лазерная указка", "Стена дедлайна", "Падающие листы",
+                "Контрольная"]
         }
 
-        # --- СПРАЙТЫ (уменьшены) ---
         self.head_sprite = None
         self.body_sprite = None
 
@@ -354,8 +350,11 @@ class MalishevBoss:
 
         # Анимация
         self.time = 0
-        self.head_amplitude = int(3.1 * ui_scale)
-        self.body_amplitude = int(10 * ui_scale)
+
+        self.base_head_amplitude_default = int(1.7 * ui_scale)  # Базовая амплитуда
+        self.base_body_amplitude_default = int(4.3 * ui_scale)
+        self.head_amplitude = self.base_head_amplitude_default
+        self.body_amplitude = self.base_body_amplitude_default
         self.head_frequency = 0.03
         self.body_frequency = 0.025
 
@@ -491,11 +490,16 @@ class MalishevBoss:
             if self.current_minigame.is_finished():
                 self.end_attack()
 
+        # Тряска только при активном shake_timer
         if self.shake_timer > 0:
             self.shake_timer -= 1
+            # Временная тряска
+            self.head_amplitude = self.base_head_amplitude_default * 3
+            self.body_amplitude = self.base_body_amplitude_default * 3
             if self.shake_timer == 0:
-                self.head_amplitude = int(5 * self.ui_scale)
-                self.body_amplitude = int(12 * self.ui_scale)
+                # Возвращаем нормальную амплитуду
+                self.head_amplitude = self.base_head_amplitude_default
+                self.body_amplitude = self.base_body_amplitude_default
 
         if self.flash_timer > 0:
             self.flash_timer -= 1
@@ -515,8 +519,7 @@ class MalishevBoss:
         self.cur_hp = max(0, self.cur_hp - amount)
         self.flash_timer = 10
         self.shake_timer = 20
-        self.head_amplitude = int(3.8 * self.ui_scale)
-        self.body_amplitude = int(11 * self.ui_scale)
+
 
     def draw(self, screen):
         # Отрисовка туловища ПЕРВЫМ (сзади)
