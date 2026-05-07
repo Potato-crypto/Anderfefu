@@ -5,8 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="95355c3c-6fe2-4a92-bb5c-31f96545ea3e" name="Changes" comment="Готовый первый босс файт">
+      <change beforePath="$PROJECT_DIR$/.idea/Andertaile.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Andertaile.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Main/GameLogic/MainGameClasses.py" beforeDir="false" afterPath="$PROJECT_DIR$/Main/GameLogic/MainGameClasses.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main/GameLogic/test_battle.py" beforeDir="false" afterPath="$PROJECT_DIR$/Main/GameLogic/test_battle.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -205,7 +207,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-ca5e2b39c7df-6e1f45a539f7-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-253.29346.308" />
+        <option value="bundled-python-sdk-d7ad00fb9fc3-c546a90a8094-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-242.23726.102" />
       </set>
     </attachedChunks>
   </component>
