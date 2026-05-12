@@ -542,3 +542,6 @@ class CombinedAttack(AttackPattern):
             self.attack1.draw(screen)
         if self.attack2:
             self.attack2.draw(screen)
+
+
+# Оставлю здесь коммент |:)
