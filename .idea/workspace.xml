@@ -5,6 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="95355c3c-6fe2-4a92-bb5c-31f96545ea3e" name="Changes" comment="Готовый первый босс файт">
+      <change afterPath="$PROJECT_DIR$/.idea/material_theme_project_new.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Main/GameLogic/HeartGraphGame.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Main/GameLogic/Ivanov_battle.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Main/GameLogic/KuinaGame.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Main/GameLogic/LabyrinthGame.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Main/Sprites/Ivanov_body.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Main/Sprites/Ivanov_head.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Main/entities/IvanovBoss.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Andertaile.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Andertaile.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -36,14 +46,13 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/Potato-crypto/Anderfefu.git&quot;,
-    &quot;accountId&quot;: &quot;1a22e52c-95d0-45b0-918c-e4fff565bca0&quot;
+    &quot;accountId&quot;: &quot;aee57797-8073-4ba5-809f-dc5f572f9e06&quot;
   }
 }</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 3
 }</component>
   <component name="ProjectId" id="3AvGZTPs0DrQCpD1tdDcd0xy0MG" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -51,6 +60,7 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;Python.Game.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Ivanov_battle.executor&quot;: &quot;Run&quot;,
     &quot;Python.test_battle (1).executor&quot;: &quot;Run&quot;,
     &quot;Python.test_battle.executor&quot;: &quot;Run&quot;,
     &quot;Python.test_splash.executor&quot;: &quot;Run&quot;,
@@ -58,8 +68,9 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;feature/test__boss__fight&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/AnderFefu/Anderfefu/Main/Sounds&quot;
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feature/boss__fight__Ivanov&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/AnderFefu/Anderfefu/Main/Sprites&quot;
   },
   &quot;keyToStringList&quot;: {
     &quot;ChangesTree.GroupingKeys&quot;: []
@@ -67,10 +78,11 @@
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\AnderFefu\Anderfefu\Main\Sprites" />
+      <recent name="C:\AnderFefu\Anderfefu\Main\GameLogic" />
+      <recent name="C:\AnderFefu\Anderfefu\Main\entities" />
       <recent name="C:\AnderFefu\Anderfefu\Main\Sounds" />
       <recent name="C:\AnderFefu\Anderfefu\Main\soundtrack" />
-      <recent name="C:\Users\Tomato\PycharmProjects\Andertaile\Main\Sounds" />
-      <recent name="C:\Users\Tomato\PycharmProjects\Andertaile\Main\Images" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\dev\game\Anderfefu\Main\Sprites" />
@@ -80,7 +92,7 @@
       <recent name="C:\Users\Tomato\PycharmProjects\Andertaile\Main\GameLogic" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.test_battle (1)">
+  <component name="RunManager" selected="Python.Ivanov_battle">
     <configuration name="Game" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Andertaile" />
       <option name="ENV_FILES" value="" />
@@ -94,7 +106,31 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="RUN_TOOL" value="" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Main/GameLogic/Game.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Ivanov_battle" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Andertaile" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Main/GameLogic" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="RUN_TOOL" value="" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Main/GameLogic/Ivanov_battle.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -116,6 +152,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="RUN_TOOL" value="" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Main/GameLogic/test_battle.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -138,6 +175,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="RUN_TOOL" value="" />
       <option name="SCRIPT_NAME" value="C:\dev\game\Anderfefu\Main\GameLogic\test_battle.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -160,29 +198,8 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="RUN_TOOL" value="" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test_splash.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="testroom" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="Andertaile" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/testroom.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -193,18 +210,18 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.Ivanov_battle" />
         <item itemvalue="Python.test_battle (1)" />
         <item itemvalue="Python.Game" />
         <item itemvalue="Python.test_battle" />
         <item itemvalue="Python.test_splash" />
-        <item itemvalue="Python.testroom" />
       </list>
     </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-d7ad00fb9fc3-c546a90a8094-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-242.23726.102" />
+        <option value="bundled-python-sdk-ca5e2b39c7df-6e1f45a539f7-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-253.29346.308" />
       </set>
     </attachedChunks>
   </component>
