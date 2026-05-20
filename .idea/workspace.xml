@@ -4,18 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="95355c3c-6fe2-4a92-bb5c-31f96545ea3e" name="Changes" comment="Готовый первый босс файт">
-      <change afterPath="$PROJECT_DIR$/.idea/material_theme_project_new.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Main/GameLogic/HeartGraphGame.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Main/GameLogic/Ivanov_battle.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Main/GameLogic/KuinaGame.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Main/GameLogic/LabyrinthGame.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Main/Sprites/Ivanov_body.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Main/Sprites/Ivanov_head.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Main/entities/IvanovBoss.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Andertaile.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Andertaile.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="95355c3c-6fe2-4a92-bb5c-31f96545ea3e" name="Changes" comment="Боссфайт с Ивановым - пока не идеально, но сойдет, три мини-игры, все работает, кто пройдет - тот молодец, кто не пройдет - тот ну...">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main/GameLogic/LabyrinthGame.py" beforeDir="false" afterPath="$PROJECT_DIR$/Main/GameLogic/LabyrinthGame.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -266,7 +257,15 @@
       <option name="project" value="LOCAL" />
       <updated>1778154489177</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Боссфайт с Ивановым - пока не идеально, но сойдет, три мини-игры, все работает, кто пройдет - тот молодец, кто не пройдет - тот ну...">
+      <option name="closed" value="true" />
+      <created>1779270517966</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1779270517968</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -284,6 +283,7 @@
     <MESSAGE value="Начальное окно с анимацией" />
     <MESSAGE value="Файл для пуска" />
     <MESSAGE value="Готовый первый босс файт" />
-    <option name="LAST_COMMIT_MESSAGE" value="Готовый первый босс файт" />
+    <MESSAGE value="Боссфайт с Ивановым - пока не идеально, но сойдет, три мини-игры, все работает, кто пройдет - тот молодец, кто не пройдет - тот ну..." />
+    <option name="LAST_COMMIT_MESSAGE" value="Боссфайт с Ивановым - пока не идеально, но сойдет, три мини-игры, все работает, кто пройдет - тот молодец, кто не пройдет - тот ну..." />
   </component>
 </project>

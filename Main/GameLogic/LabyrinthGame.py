@@ -1,6 +1,6 @@
 # LabyrinthGame.py
-# Мини-игра "Лабиринт знаний" – собери зелёные мишени, не касаясь стен
-# Игрок – красный круг, мишени – зелёные круги
+# Мини-игра "Лабиринт знаний" – собери зелёные мишени
+# Плавное движение с проверкой коллизий
 
 import pygame as pg
 import random
@@ -21,28 +21,33 @@ class LabyrinthGame:
         self.finished = False
         self.victory = False
 
-        # Игровое поле (увеличено – минимальные отступы)
+        # Игровое поле
         self.game_arena = self.arena.inflate(-10, -10)
         self.game_arena.x = self.arena.x + 5
         self.game_arena.y = self.arena.y + 5
 
-        # Размеры сетки лабиринта (11x11 – клетки крупнее)
-        self.grid_size = 11
-        self.cell_w = self.game_arena.width // self.grid_size
-        self.cell_h = self.game_arena.height // self.grid_size
+        # Размеры лабиринта
+        self.cell_size = 25
+        self.grid_cols = self.game_arena.width // self.cell_size
+        self.grid_rows = self.game_arena.height // self.cell_size
+        self.grid_cols = self.grid_cols if self.grid_cols % 2 == 1 else self.grid_cols - 1
+        self.grid_rows = self.grid_rows if self.grid_rows % 2 == 1 else self.grid_rows - 1
 
         # Генерация лабиринта
         self.walls = []
+        self.maze = None  # сохраняем массив лабиринта для проверок
         self.scrolls = []
         self._generate_maze()
 
-        # Параметры игрока (красный круг, увеличен)
-        self.player_radius = max(min(self.cell_w, self.cell_h) // 3, 12)
+        # Параметры игрока
+        self.player_radius = self.cell_size // 3
+        self.player_radius = max(6, min(12, self.player_radius))
         self.player_pos = [self.game_arena.centerx, self.game_arena.centery]
-        self.player_speed = 5
+        self.player_speed = 3  # уменьшил скорость для лучшего контроля
+        self.target_radius = self.player_radius - 1
 
-        # Находим стартовую позицию (свободную клетку)
-        self._place_player_at_start()
+        # Безопасная установка стартовой позиции
+        self._place_player_safely()
 
         # Состояние клавиш
         self.keys_pressed = {
@@ -52,14 +57,18 @@ class LabyrinthGame:
             pg.K_d: False
         }
 
+        # Флаг для анимации столкновения
+        self.hit_cooldown = 0
+        self.HIT_COOLDOWN_MAX = 30  # кадров между ударами о стену
+
         # Шрифты и цвета
-        self.font = pg.font.Font(None, int(self.cell_h * 0.6))
+        self.font = pg.font.Font(None, int(self.target_radius * 1.5))
         self.font_info = pg.font.Font(None, int(self.game_arena.height * 0.08))
         self.bg_color = (20, 20, 40)
         self.wall_color = (70, 70, 120)
         self.wall_outline = (120, 120, 170)
-        self.player_color = (255, 50, 50)  # КРАСНЫЙ игрок
-        self.target_color = (80, 220, 80)  # ЗЕЛЁНЫЕ мишени
+        self.player_color = (255, 50, 50)
+        self.target_color = (80, 220, 80)
         self.target_outline = (150, 255, 150)
 
         # Звуки
@@ -77,86 +86,149 @@ class LabyrinthGame:
             return None
 
     def _generate_maze(self):
-        """Генерация лабиринта методом рекурсивного бэктрекинга"""
-        # Инициализация всех клеток как стен
-        maze = [[1 for _ in range(self.grid_size)] for _ in range(self.grid_size)]
+        """Генерация лабиринта с сохранением массива"""
+        self.maze = [[1 for _ in range(self.grid_cols)] for _ in range(self.grid_rows)]
 
-        # Начинаем с (1,1) и делаем её проходом
-        stack = [(1, 1)]
-        maze[1][1] = 0
+        start_x, start_y = 1, 1
+        self.maze[start_y][start_x] = 0
+        stack = [(start_x, start_y)]
 
         while stack:
             x, y = stack[-1]
             neighbours = []
-            # Соседние клетки через одну
             for dx, dy in [(0, -2), (0, 2), (-2, 0), (2, 0)]:
                 nx, ny = x + dx, y + dy
-                if 0 < nx < self.grid_size - 1 and 0 < ny < self.grid_size - 1 and maze[ny][nx] == 1:
+                if 0 < nx < self.grid_cols - 1 and 0 < ny < self.grid_rows - 1 and self.maze[ny][nx] == 1:
                     neighbours.append((nx, ny, dx // 2, dy // 2))
 
             if neighbours:
-                nx, ny, wall_dx, wall_dy = random.choice(neighbours)
-                maze[ny][nx] = 0
-                maze[y + wall_dy][x + wall_dx] = 0
+                nx, ny, wx, wy = random.choice(neighbours)
+                self.maze[ny][nx] = 0
+                self.maze[y + wy][x + wx] = 0
                 stack.append((nx, ny))
             else:
                 stack.pop()
 
-        # Преобразуем в список стен для отрисовки
+        # Стены
         self.walls = []
-        for y in range(self.grid_size):
-            for x in range(self.grid_size):
-                if maze[y][x] == 1:
+        for y in range(self.grid_rows):
+            for x in range(self.grid_cols):
+                if self.maze[y][x] == 1:
                     rect = pg.Rect(
-                        self.game_arena.left + x * self.cell_w,
-                        self.game_arena.top + y * self.cell_h,
-                        self.cell_w, self.cell_h
+                        self.game_arena.left + x * self.cell_size,
+                        self.game_arena.top + y * self.cell_size,
+                        self.cell_size, self.cell_size
                     )
                     self.walls.append(rect)
 
-        # Размещаем мишени в свободных клетках
+        # Мишени
         free_cells = []
-        for y in range(self.grid_size):
-            for x in range(self.grid_size):
-                if maze[y][x] == 0:
-                    free_cells.append((x, y))
+        for y in range(self.grid_rows):
+            for x in range(self.grid_cols):
+                if self.maze[y][x] == 0:
+                    if x != start_x or y != start_y:
+                        free_cells.append((x, y))
 
-        # Убираем стартовую позицию (центр)
-        start_x = self.grid_size // 2
-        start_y = self.grid_size // 2
-        if (start_x, start_y) in free_cells:
-            free_cells.remove((start_x, start_y))
+        if len(free_cells) < self.scroll_count:
+            self.scroll_count = len(free_cells)
 
-        # Выбираем случайные клетки для мишеней
-        scroll_positions = random.sample(free_cells, min(self.scroll_count, len(free_cells)))
-        for x, y in scroll_positions:
-            center = (
-                self.game_arena.left + x * self.cell_w + self.cell_w // 2,
-                self.game_arena.top + y * self.cell_h + self.cell_h // 2
-            )
-            self.scrolls.append({
-                'center': center,
-                'collected': False
-            })
+        if free_cells:
+            scroll_positions = random.sample(free_cells, min(self.scroll_count, len(free_cells)))
+            for x, y in scroll_positions:
+                center = (
+                    self.game_arena.left + x * self.cell_size + self.cell_size // 2,
+                    self.game_arena.top + y * self.cell_size + self.cell_size // 2
+                )
+                self.scrolls.append({
+                    'center': center,
+                    'collected': False
+                })
 
-    def _place_player_at_start(self):
-        """Помещает игрока в центр лабиринта (свободную клетку)"""
-        start_x = self.game_arena.left + (self.grid_size // 2) * self.cell_w + self.cell_w // 2
-        start_y = self.game_arena.top + (self.grid_size // 2) * self.cell_h + self.cell_h // 2
+    def _is_collision(self, rect):
+        """Проверяет, пересекается ли прямоугольник со стенами"""
+        for wall in self.walls:
+            if rect.colliderect(wall):
+                return True
+        return False
+
+    def _can_move_to(self, new_rect):
+        """Проверяет, можно ли переместиться в новую позицию"""
+        # Проверка границ арены
+        if (new_rect.left < self.game_arena.left or
+            new_rect.right > self.game_arena.right or
+            new_rect.top < self.game_arena.top or
+            new_rect.bottom > self.game_arena.bottom):
+            return False
+        # Проверка столкновения со стенами
+        return not self._is_collision(new_rect)
+
+    def _place_player_safely(self):
+        """Помещает игрока в центр стартовой клетки"""
+        start_x = self.game_arena.left + self.cell_size + self.cell_size // 2
+        start_y = self.game_arena.top + self.cell_size + self.cell_size // 2
         self.player_pos = [start_x, start_y]
 
-    def _check_wall_collision(self):
-        """Проверяет, касается ли игрок стены"""
-        player_rect = pg.Rect(
-            self.player_pos[0] - self.player_radius,
+    def _check_wall_collision_and_move(self):
+        """Плавное движение с проверкой коллизий – двигаем отдельно по X и Y"""
+        new_x = self.player_pos[0]
+        new_y = self.player_pos[1]
+
+        # Движение по X
+        if self.keys_pressed[pg.K_a]:
+            new_x -= self.player_speed
+        if self.keys_pressed[pg.K_d]:
+            new_x += self.player_speed
+
+        # Проверяем движение по X
+        test_rect = pg.Rect(
+            new_x - self.player_radius,
             self.player_pos[1] - self.player_radius,
             self.player_radius * 2,
             self.player_radius * 2
         )
-        for wall in self.walls:
-            if player_rect.colliderect(wall):
-                return True
-        return False
+        if self._can_move_to(test_rect):
+            self.player_pos[0] = new_x
+        elif self.hit_cooldown <= 0:
+            # Удар о стену (только при движении)
+            if (self.keys_pressed[pg.K_a] or self.keys_pressed[pg.K_d]) and self.hit_cooldown <= 0:
+                self.hit_cooldown = self.HIT_COOLDOWN_MAX
+                new_hp = max(0, self.battle_ui.current_hp - self.wall_damage)
+                self.battle_ui.set_hp(new_hp)
+                self.battle_ui.add_message(f"Стена! -{self.wall_damage} HP")
+                if self.sound_wall:
+                    self.sound_wall.play()
+                if new_hp <= 0:
+                    self.finished = True
+                    self.victory = False
+                    return
+
+        # Движение по Y
+        if self.keys_pressed[pg.K_w]:
+            new_y -= self.player_speed
+        if self.keys_pressed[pg.K_s]:
+            new_y += self.player_speed
+
+        # Проверяем движение по Y
+        test_rect = pg.Rect(
+            self.player_pos[0] - self.player_radius,
+            new_y - self.player_radius,
+            self.player_radius * 2,
+            self.player_radius * 2
+        )
+        if self._can_move_to(test_rect):
+            self.player_pos[1] = new_y
+        elif self.hit_cooldown <= 0:
+            if (self.keys_pressed[pg.K_w] or self.keys_pressed[pg.K_s]) and self.hit_cooldown <= 0:
+                self.hit_cooldown = self.HIT_COOLDOWN_MAX
+                new_hp = max(0, self.battle_ui.current_hp - self.wall_damage)
+                self.battle_ui.set_hp(new_hp)
+                self.battle_ui.add_message(f"Стена! -{self.wall_damage} HP")
+                if self.sound_wall:
+                    self.sound_wall.play()
+                if new_hp <= 0:
+                    self.finished = True
+                    self.victory = False
+                    return
 
     def _apply_damage(self, damage_amount):
         new_hp = max(0, self.battle_ui.current_hp - damage_amount)
@@ -173,45 +245,18 @@ class LabyrinthGame:
             if event.key in self.keys_pressed:
                 self.keys_pressed[event.key] = False
 
-    def _apply_movement(self):
-        new_x = self.player_pos[0]
-        new_y = self.player_pos[1]
-
-        if self.keys_pressed[pg.K_w]:
-            new_y -= self.player_speed
-        if self.keys_pressed[pg.K_s]:
-            new_y += self.player_speed
-        if self.keys_pressed[pg.K_a]:
-            new_x -= self.player_speed
-        if self.keys_pressed[pg.K_d]:
-            new_x += self.player_speed
-
-        # Сохраняем старую позицию
-        old_pos = self.player_pos.copy()
-        self.player_pos = [new_x, new_y]
-
-        # Проверка на столкновение со стенами
-        if self._check_wall_collision():
-            self.player_pos = old_pos
-            new_hp = self._apply_damage(self.wall_damage)
-            self.battle_ui.add_message(f"Стена! -{self.wall_damage} HP")
-            if self.sound_wall:
-                self.sound_wall.play()
-            if new_hp <= 0:
-                self.finished = True
-                self.victory = False
-                if self.sound_lose:
-                    self.sound_lose.play()
-                return
-
     def update(self):
         if self.finished:
             return
         now = pg.time.get_ticks()
 
-        self._apply_movement()
+        # Обновляем кулдаун удара о стену
+        if self.hit_cooldown > 0:
+            self.hit_cooldown -= 1
 
-        # Проверка времени (поражение только если время вышло И не победа)
+        # Движение с проверкой коллизий
+        self._check_wall_collision_and_move()
+
         if now - self.start_time > self.time_limit:
             self.finished = True
             self.victory = (self.score >= self.scroll_count)
@@ -231,10 +276,10 @@ class LabyrinthGame:
         for scroll in self.scrolls[:]:
             if not scroll['collected']:
                 scroll_rect = pg.Rect(
-                    scroll['center'][0] - self.player_radius,
-                    scroll['center'][1] - self.player_radius,
-                    self.player_radius * 2,
-                    self.player_radius * 2
+                    scroll['center'][0] - self.target_radius,
+                    scroll['center'][1] - self.target_radius,
+                    self.target_radius * 2,
+                    self.target_radius * 2
                 )
                 if player_rect.colliderect(scroll_rect):
                     scroll['collected'] = True
@@ -249,7 +294,6 @@ class LabyrinthGame:
                             self.sound_win.play()
                         return
 
-        # Проверка поражения по HP
         if self.battle_ui.current_hp <= 0:
             self.finished = True
             self.victory = False
@@ -258,32 +302,25 @@ class LabyrinthGame:
             return
 
     def draw(self, screen):
-        # Фон
         pg.draw.rect(screen, self.bg_color, self.arena)
         pg.draw.rect(screen, (100, 100, 150), self.arena, 3)
 
-        # Игровое поле
         pg.draw.rect(screen, (35, 35, 60), self.game_arena)
         pg.draw.rect(screen, (130, 130, 180), self.game_arena, 2)
 
-        # Стены
         for wall in self.walls:
             pg.draw.rect(screen, self.wall_color, wall)
             pg.draw.rect(screen, self.wall_outline, wall, 1)
 
-        # Мишени (ЗЕЛЁНЫЕ круги)
         for scroll in self.scrolls:
             if not scroll['collected']:
-                pg.draw.circle(screen, self.target_color, scroll['center'], self.player_radius)
-                pg.draw.circle(screen, self.target_outline, scroll['center'], self.player_radius, 2)
-                # Рисуем звёздочку или точку внутри
-                pg.draw.circle(screen, (0, 0, 0), scroll['center'], self.player_radius // 2)
+                pg.draw.circle(screen, self.target_color, scroll['center'], self.target_radius)
+                pg.draw.circle(screen, self.target_outline, scroll['center'], self.target_radius, 2)
+                pg.draw.circle(screen, (0, 0, 0), scroll['center'], self.target_radius // 2)
 
-        # Игрок (КРАСНЫЙ круг)
         pg.draw.circle(screen, self.player_color, self.player_pos, self.player_radius)
         pg.draw.circle(screen, (255, 200, 200), self.player_pos, self.player_radius, 2)
 
-        # Верхняя панель
         info_bg = pg.Surface((self.arena.width, 45), pg.SRCALPHA)
         info_bg.fill((0, 0, 0, 180))
         screen.blit(info_bg, (self.arena.left, self.arena.top))
@@ -295,7 +332,6 @@ class LabyrinthGame:
         time_text = self.font_info.render(f"Время: {remaining} с", True, (200, 200, 255))
         screen.blit(time_text, (self.arena.centerx - time_text.get_width() // 2, self.arena.top + 10))
 
-        # Полоска HP
         bar_width = 200
         bar_height = 18
         bar_x = self.arena.right - bar_width - 15
