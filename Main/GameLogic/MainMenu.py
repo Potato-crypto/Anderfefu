@@ -137,8 +137,7 @@ class Menu:
 
             # Формируем полный путь к файлу карты (поднимаемся на уровень выше)
             project_root = os.path.dirname(os.path.dirname(script_dir))
-            map_path = os.path.join(project_root, "map", "location1", "testlocation.tmx")
-
+            map_path = os.path.join(project_root, "map", "location1", "corridor.tmx")
 
             # Проверяем существование файла
             if not os.path.exists(map_path):
@@ -150,6 +149,8 @@ class Menu:
 
             # Находим спавн и создаем игрока
             spawn_x, spawn_y = self.game_map.find_spawn()
+            print(f"Спавн найден: ({spawn_x}, {spawn_y})")  # ОТЛАДКА
+
             self.player = Player(spawn_x, spawn_y, self.game_map)
 
             # Создаем камеру
@@ -158,10 +159,15 @@ class Menu:
             self.camera = Camera(self.surface.get_width(), self.surface.get_height(),
                                  map_pixel_width, map_pixel_height, scale=4)
 
-            return True
+            print("Игра успешно загружена!")  # ОТЛАДКА
+            return True  # <-- ЭТО ВАЖНО! У ВАС ЭТОЙ СТРОКИ НЕТ!
 
-        except Exception:
+        except Exception as e:
+            print(f"Ошибка загрузки игры: {e}")
+            import traceback
+            traceback.print_exc()  # Показываем полную ошибку
             return False
+
 
     def update_game(self):
         if not self.game_active:
@@ -181,7 +187,7 @@ class Menu:
 
     def handle_event(self, event):
         if not self.active and not self.anim_completed:
-            return
+            return None
 
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_DOWN:
@@ -193,19 +199,22 @@ class Menu:
                 self.sound_items_effect.play()
 
             if event.key == pg.K_KP_ENTER or event.key == pg.K_RETURN:
-                if self.selected == 0:  # Нажали на кнопку START
+                if self.selected == 0:  # START
                     if self.start_game():
-                        self.active = False  # Деактивируем меню
-                        self.game_active = True  # Активируем игру
+                        self.active = False
+                        self.game_active = True
+                        return "start"
+                    else:
+                        return None
 
-                if self.selected == 1:  # Нажали на кнопку SETTINGS
+                if self.selected == 1:  # SETTINGS
                     # Здесь будет логика настроек
-                    pass
+                    return None
 
-                if self.selected == 2:  # Нажали на кнопку EXIT
-                    self.active = False
-                    pg.quit()
-                    return
+                if self.selected == 2:  # EXIT
+                    return "exit"
+
+        return None
 
     def run(self):
         if self.game_active:

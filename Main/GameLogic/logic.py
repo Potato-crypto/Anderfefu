@@ -66,7 +66,7 @@ class SplashScreen:
             os.path.join(script_dir, "texture/SplashScreen/3.1.jpg"),
             None,
             None,
-            os.path.join(script_dir, "texture/SplashScreen/FEFUT.jpg"),
+            os.path.join(script_dir, "../SplashScreen/FEFUT.jpg"),
             os.path.join(script_dir, "texture/SplashScreen/4.jpg"),
             os.path.join(script_dir, "texture/SplashScreen/5.jpg"),
             os.path.join(script_dir, "texture/SplashScreen/6.jpg"),

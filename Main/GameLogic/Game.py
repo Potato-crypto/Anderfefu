@@ -60,7 +60,9 @@ class Game:
             self.game_map = TiledMap(map_path, scale=4)
 
             # Находим спавн и создаем игрока
-            spawn_x, spawn_y = self.game_map.find_spawn()
+            spawn_x = (self.game_map.width // 2) * self.game_map.tilewidth
+            spawn_y = (self.game_map.height // 2) * self.game_map.tileheight
+            #spawn_x, spawn_y = self.game_map.find_spawn()
             self.player = Player(spawn_x, spawn_y, self.game_map)
 
             # Создаем камеру
@@ -94,6 +96,21 @@ class Game:
         if self.player and self.camera:
             self.player.render(self.screen, self.camera)
 
+            # ОТЛАДКА: рисуем крестик в центре экрана
+            screen_center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
+            pg.draw.circle(self.screen, (255, 255, 0), screen_center, 10, 2)
+            pg.draw.line(self.screen, (255, 255, 0),
+                         (screen_center[0] - 20, screen_center[1]),
+                         (screen_center[0] + 20, screen_center[1]), 2)
+            pg.draw.line(self.screen, (255, 255, 0),
+                         (screen_center[0], screen_center[1] - 20),
+                         (screen_center[0], screen_center[1] + 20), 2)
+
+            # Выводим позицию игрока
+            font = pg.font.Font(None, 36)
+            pos_text = font.render(f"Player: {self.player.rect.x}, {self.player.rect.y}", True, (255, 255, 255))
+            self.screen.blit(pos_text, (10, 10))
+
     def update(self):
         pg.display.update()
 
@@ -111,25 +128,27 @@ class Game:
                         self.screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pg.FULLSCREEN)
                         self.full_screen = True
 
-                # Пропуск интро компании (клавиша пробел)
                 if self.company_intro_active and event.key == pg.K_SPACE:
                     self.company_intro_active = False
                     self.splash_intro_active = True
 
-            # Обработка событий меню (когда оно активно)
+            # Обработка событий меню
             if self.menu_active:
                 result = self.menu.handle_event(event)
-                # Проверяем, не запустилась ли игра через меню
-                if hasattr(self.menu, 'game_active') and self.menu.game_active:
+                print(f"Результат из меню: {result}")  # ОТЛАДКА
+
+                if result == "start":
+                    print("ЗАПУСКАЕМ ИГРУ!")
                     self.menu_active = False
                     self.game_active = True
                     # Копируем игровые объекты из меню
                     self.game_map = self.menu.game_map
                     self.player = self.menu.player
                     self.camera = self.menu.camera
+                    print(f"Объекты скопированы: map={self.game_map}, player={self.player}")
                 elif result == "exit":
                     self.running = False
-                continue  # Не обрабатываем другие события, если меню активно
+                continue
 
             # Обработка событий паузы (когда она активна)
             if self.pause_active:
@@ -160,34 +179,32 @@ class Game:
         if self.company_intro_active:
             self.company_intro_active = self.intro.run()
             if not self.company_intro_active:
-                # Интро компании закончилось, запускаем сюжетное интро
                 self.splash_intro_active = True
-            return  # Важно: выходим, чтобы не рисовать поверх интро
+            return
 
         # Показываем сюжетное интро
         if self.splash_intro_active and not self.splash_shown:
             self.splash.show()
             self.splash_shown = True
-            # После показа сюжетного интро активируем меню
             self.menu_active = True
             self.splash_intro_active = False
             return
 
         # Показываем меню
         if self.menu_active:
-            self.menu.run()  # Используем run вместо draw
+            self.menu.run()  # Это просто отрисовывает меню
             return
 
         # Показываем игру
         if self.game_active:
-            # Отрисовываем игру
+            # ОТРИСОВЫВАЕМ игру
             self.draw_game()
 
             # Если пауза активна, отрисовываем её поверх игры
             if self.pause_active:
                 self.pause.draw()
 
-            # Обновляем игровую логику
+            # ОБНОВЛЯЕМ игровую логику
             self.update_game()
             return
 

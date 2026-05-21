@@ -1,7 +1,8 @@
 import xml.etree.ElementTree as ET
 import csv
 import os
-
+import pygame as pg
+import math
 
 class TiledMap:
     """Загрузка карты из .tmx с поддержкой масштабирования."""
@@ -55,7 +56,7 @@ class TiledMap:
         for ts in self.tilesets:
             # Используем путь относительно файла карты
             source_path = os.path.join(self.map_dir, ts['source'])
-            print(f"Загрузка тайлсета: {source_path}")  # Для отладки
+            print(f"Загрузка тайлсета: {source_path}")
 
             if not os.path.exists(source_path):
                 print(f"Файл тайлсета не найден: {source_path}")
@@ -76,13 +77,13 @@ class TiledMap:
             image_source = image_elem.attrib['source']
             image_path = os.path.join(os.path.dirname(source_path), image_source)
 
-            print(f"Загрузка изображения: {image_path}")  # Для отладки
+            print(f"Загрузка изображения: {image_path}")
 
             try:
-                image = pygame.image.load(image_path).convert_alpha()
-            except pygame.error as e:
+                image = pg.image.load(image_path).convert_alpha()
+            except pg.error as e:
                 print(f"Не удалось загрузить {image_path}: {e}")
-                image = pygame.Surface((self.tilewidth, self.tileheight))
+                image = pg.Surface((self.tilewidth, self.tileheight))
                 image.fill((255, 0, 255))
 
             tilecount = int(ts_root.attrib.get('tilecount', 1))
@@ -90,23 +91,44 @@ class TiledMap:
 
             orig_tiles = []
             scaled_tiles = []
+
             for i in range(tilecount):
                 x = (i % columns) * self.tilewidth
                 y = (i // columns) * self.tileheight
                 try:
                     tile_surface = image.subsurface((x, y, self.tilewidth, self.tileheight))
                 except ValueError:
-                    tile_surface = pygame.Surface((self.tilewidth, self.tileheight))
+                    tile_surface = pg.Surface((self.tilewidth, self.tileheight))
                     tile_surface.fill((255, 0, 0))
+
+                # === ЗАМЕНЯЕМ ДВЕРЬ (GID 15) НА КОРИЧНЕВЫЙ ПРЯМОУГОЛЬНИК ===
+                current_gid = ts['firstgid'] + i
+                if current_gid == 15:
+                    print(f"  Замена двери GID 15 на коричневый цвет")
+                    # Создаём коричневый прямоугольник вместо текстуры двери
+                    tile_surface = pg.Surface((self.tilewidth, self.tileheight))
+                    tile_surface.fill((139, 69, 19))  # Коричневый цвет
+                    # Добавим рамку для эффекта двери
+                    pg.draw.rect(tile_surface, (101, 67, 33), (0, 0, self.tilewidth, self.tileheight), 2)
+
                 orig_tiles.append(tile_surface)
+
                 # Масштабируем
-                scaled = pygame.transform.scale(tile_surface,
-                                                (self.tilewidth * self.scale,
-                                                 self.tileheight * self.scale))
+                scaled = pg.transform.scale(tile_surface,
+                                            (self.tilewidth * self.scale,
+                                             self.tileheight * self.scale))
                 scaled_tiles.append(scaled)
 
             ts['tiles'] = orig_tiles
             ts['scaled_tiles'] = scaled_tiles
+
+            print(f"Загружено {len(orig_tiles)} тайлов, firstgid={ts['firstgid']}")
+
+            # Проверяем, где находится GID 15
+            if ts['firstgid'] <= 15 < ts['firstgid'] + len(orig_tiles):
+                tile_index = 15 - ts['firstgid']
+                print(f"  GID 15 заменён на коричневый цвет, индекс={tile_index}")
+
 
     def get_tile_surface(self, gid, scaled=False):
         if gid == 0:
@@ -115,7 +137,14 @@ class TiledMap:
             firstgid = ts['firstgid']
             tiles = ts['scaled_tiles'] if scaled else ts['tiles']
             if tiles and firstgid <= gid < firstgid + len(tiles):
-                return tiles[gid - firstgid]
+                tile = tiles[gid - firstgid]
+
+                # Отладка для двери (GID 15)
+                if gid == 15:
+                    expected_size = (self.tilewidth * self.scale if scaled else self.tilewidth)
+                    print(f"GID 15: размер={tile.get_width()}x{tile.get_height()}, ожидалось={expected_size}")
+
+                return tile
         return None
 
     def get_tile_gid(self, x, y, layer=0):
@@ -125,7 +154,67 @@ class TiledMap:
             return self.layers[layer][ty][tx]
         return None
 
-    def is_walkable(self, rect, layer=0):
+    def is_walkable(self, rect):
+        px = rect.centerx
+        py = rect.centery
+
+        # === РАЗРЕШЕННЫЕ ЗОНЫ (игрок может здесь ходить всегда) ===
+        # Основная комната
+        if 420 <= px <= 550 and 272 <= py <= 420:
+            return True
+
+        # Коридор справа (x=538, y от 80 до 138)
+        if abs(px - 538) < 8 and 80 <= py <= 138:
+            return True
+
+        # === ЗАПРЕЩЕННЫЕ ЗОНЫ ===
+        # Точки и линии, где игрок НЕ может находиться
+
+        # Точка (576, 160)
+        if abs(px - 576) < 8 and abs(py - 160) < 8:
+            return False
+
+        # Точка (400, 158)
+        if abs(px - 400) < 8 and abs(py - 158) < 8:
+            return False
+
+        # Вертикальная линия x=367, y от 576 до 704
+        if abs(px - 367) < 8 and 576 <= py <= 704:
+            return False
+
+        # Вертикальная линия x=594, y от 576 до 704
+        if abs(px - 594) < 8 and 576 <= py <= 704:
+            return False
+
+        # Вертикальная линия x=416, y от 80 до 144
+        if abs(px - 416) < 8 and 80 <= py <= 144:
+            return False
+
+        # Вертикальная линия x=545, y от 80 до 144
+        if abs(px - 545) < 8 and 80 <= py <= 144:
+            return False
+
+        # Вертикальная линия x=556, y от 78 до 140
+        if px <= 400 and 78 <= py <= 144:
+            return False
+
+        # Горизонтальная линия y=79, x от 415 до 545
+        if abs(py - 79) < 8 and 415 <= px <= 545:
+            return False
+
+        # Горизонтальная линия y=160, x от 384 до 400
+        if py >= 144 and px <= 400:
+            return False
+
+        # Горизонтальная линия y=158, x от 560 до 578
+        if abs(py - 158) < 8 and 560 <= px <= 578:
+            return False
+
+        # Горизонтальная линия y=64, x от 538 до 546
+        if abs(py - 64) < 8 and 538 <= px <= 546:
+            return False
+
+        # === ОБЫЧНАЯ ПРОВЕРКА ТАЙЛОВ ===
         left = rect.left // self.tilewidth
         right = (rect.right - 1) // self.tilewidth
         top = rect.top // self.tileheight
@@ -135,18 +224,35 @@ class TiledMap:
             for tx in range(left, right + 1):
                 if tx < 0 or tx >= self.width or ty < 0 or ty >= self.height:
                     return False
-                gid = self.layers[layer][ty][tx]
-                if gid not in (0, 1):
+
+                gid_main = self.layers[0][ty][tx]
+
+                # Непроходимые тайлы
+                if gid_main in [15, 16, 17, 19, 20, 21, 0]:
                     return False
+
+                if len(self.layers) > 1:
+                    gid_decor = self.layers[1][ty][tx]
+                    if gid_decor != 0:
+                        return False
+
         return True
 
     def find_spawn(self, layer=0):
+        # Ищем тайл с GID=1 или любым другим специальным значением
         for y in range(self.height):
             for x in range(self.width):
-                if self.layers[layer][y][x] == 1:
+                gid = self.layers[layer][y][x]
+                if gid == 1:  # Ищем специальный тайл спавна
+                    print(f"Спавн найден на позиции ({x}, {y}) с GID={gid}")
                     return (x * self.tilewidth + self.tilewidth // 2,
                             y * self.tileheight + self.tileheight // 2)
-        return (0, 0)
+
+        # Если не нашли, используем центр карты
+        center_x = (self.width // 2) * self.tilewidth + self.tilewidth // 2
+        center_y = (self.height // 2) * self.tileheight + self.tileheight // 2
+        print(f"Тайл спавна не найден, использую центр карты: ({center_x}, {center_y})")
+        return (center_x, center_y)
 
     def render(self, surface, camera):
         """Отрисовка с учётом камеры и масштаба."""
@@ -160,12 +266,18 @@ class TiledMap:
         end_x = min(self.width, int((cam_x + view_w) // self.tilewidth + 1))
         end_y = min(self.height, int((cam_y + view_h) // self.tileheight + 1))
 
+        # Отрисовка основного слоя
         for layer in self.layers:
             for y in range(start_y, end_y):
                 for x in range(start_x, end_x):
                     gid = layer[y][x]
                     if gid == 0:
                         continue
+
+                    # Пропускаем отрисовку оригинальной двери
+                    if gid == 15:
+                        continue  # Не рисуем размытую дверь
+
                     tile = self.get_tile_surface(gid, scaled=True)
                     if tile:
                         world_x = x * self.tilewidth
@@ -173,6 +285,35 @@ class TiledMap:
                         screen_x = (world_x - cam_x) * scale
                         screen_y = (world_y - cam_y) * scale
                         surface.blit(tile, (screen_x, screen_y))
+
+        # === РИСУЕМ НОВУЮ ДВЕРЬ ПОВЕРХ ===
+        # Координаты двери на карте (30,2) - подняли на 2 тайла выше (было 4, стало 2)
+        door_x = 30
+        door_y = 2  # Было 4, стало 2
+        door_width = 2  # тайла
+        door_height = 3  # тайла
+
+        # Рисуем каждый тайл двери
+        for dy in range(door_height):
+            for dx in range(door_width):
+                world_x = (door_x + dx) * self.tilewidth
+                world_y = (door_y + dy) * self.tileheight
+                screen_x = (world_x - cam_x) * scale
+                screen_y = (world_y - cam_y) * scale
+
+                # Создаём коричневый прямоугольник для каждого тайла
+                door_tile = pg.Surface((self.tilewidth * scale, self.tileheight * scale))
+                door_tile.fill((139, 69, 19))  # Коричневый цвет
+
+                # Добавляем рамку для каждого тайла
+                pg.draw.rect(door_tile, (101, 67, 33), (0, 0, door_tile.get_width(), door_tile.get_height()), 2)
+
+                # Рисуем ручку на центральном тайле
+                if dx == 1 and dy == 1:  # Центр двери
+                    pg.draw.circle(door_tile, (255, 215, 0),
+                                   (door_tile.get_width() - 8, door_tile.get_height() // 2), 4)
+
+                surface.blit(door_tile, (screen_x, screen_y))
 
 
 class Camera:
@@ -203,26 +344,26 @@ class Camera:
         y = (rect.y - self.y) * self.scale
         w = rect.width * self.scale
         h = rect.height * self.scale
-        return pygame.Rect(x, y, w, h)
+        return pg.Rect(x, y, w, h)
 
 
 class Player:
     """Игрок – красный квадрат."""
     def __init__(self, x, y, game_map):
-        self.rect = pygame.Rect(x - 8, y - 8, 16, 16)
+        self.rect = pg.Rect(x - 8, y - 8, 16, 16)
         self.speed = 2
         self.map = game_map
         self.color = (255, 0, 0)
 
     def update(self, keys):
         dx, dy = 0, 0
-        if keys[pygame.K_w]:
+        if keys[pg.K_w]:
             dy -= self.speed
-        if keys[pygame.K_s]:
+        if keys[pg.K_s]:
             dy += self.speed
-        if keys[pygame.K_a]:
+        if keys[pg.K_a]:
             dx -= self.speed
-        if keys[pygame.K_d]:
+        if keys[pg.K_d]:
             dx += self.speed
         if dx != 0:
             new_rect = self.rect.move(dx, 0)
@@ -235,14 +376,7 @@ class Player:
 
     def render(self, screen, camera):
         screen_rect = camera.apply(self.rect)
-        pygame.draw.rect(screen, self.color, screen_rect)
-
-
-# MainGameClasses.py (голова заходит на тело, босс чуть меньше)
-import pygame
-import math
-import random
-
+        pg.draw.rect(screen, self.color, screen_rect)
 
 class MalishevBoss:
     def __init__(self, screen, battle_ui, ui_scale=1.0):
@@ -363,11 +497,11 @@ class MalishevBoss:
         self.body_phase = math.pi / 2
         self.flash_timer = 0
 
-        self.head_rect = pygame.Rect(
+        self.head_rect = pg.Rect(
             self.base_head_x, self.base_head_y,
             self.head_size[0], self.head_size[1]
         )
-        self.body_rect = pygame.Rect(
+        self.body_rect = pg.Rect(
             self.base_body_x, self.base_body_y,
             self.body_size[0], self.body_size[1]
         )
@@ -385,8 +519,8 @@ class MalishevBoss:
 
             for path in sprite_paths:
                 try:
-                    original = pygame.image.load(path)
-                    self.head_sprite = pygame.transform.scale(original, self.head_size)
+                    original = pg.image.load(path)
+                    self.head_sprite = pg.transform.scale(original, self.head_size)
                     print(f"Голова загружена: {self.head_size}")
                     break
                 except:
@@ -395,8 +529,8 @@ class MalishevBoss:
             for path in sprite_paths:
                 try:
                     body_path = path.replace("head", "body")
-                    original = pygame.image.load(body_path)
-                    self.body_sprite = pygame.transform.scale(original, self.body_size)
+                    original = pg.image.load(body_path)
+                    self.body_sprite = pg.transform.scale(original, self.body_size)
                     print(f"Тело загружено: {self.body_size}")
                     break
                 except:
@@ -438,7 +572,7 @@ class MalishevBoss:
 
     def draw_dialogue_box(self, screen):
         if self.displayed_dialogue:
-            font = pygame.font.Font(None, int(26 * self.ui_scale))
+            font = pg.font.Font(None, int(26 * self.ui_scale))
 
             box_x = self.body_rect.right + int(15 * self.ui_scale)
             box_y = self.body_rect.centery - int(50 * self.ui_scale)
@@ -457,10 +591,10 @@ class MalishevBoss:
             if box_y < 0:
                 box_y = int(10 * self.ui_scale)
 
-            self.dialogue_box_rect = pygame.Rect(box_x, box_y, box_width, box_height)
+            self.dialogue_box_rect = pg.Rect(box_x, box_y, box_width, box_height)
 
-            pygame.draw.rect(screen, (0, 0, 0), self.dialogue_box_rect)
-            pygame.draw.rect(screen, (255, 255, 255), self.dialogue_box_rect, 2)
+            pg.draw.rect(screen, (0, 0, 0), self.dialogue_box_rect)
+            pg.draw.rect(screen, (255, 255, 255), self.dialogue_box_rect, 2)
 
             text_x = box_x + padding
             text_y = box_y + padding
@@ -526,24 +660,24 @@ class MalishevBoss:
         if self.body_sprite:
             if self.flash_timer > 0:
                 tinted = self.body_sprite.copy()
-                tinted.fill((255, 0, 0, 100), special_flags=pygame.BLEND_RGBA_MULT)
+                tinted.fill((255, 0, 0, 100), special_flags=pg.BLEND_RGBA_MULT)
                 screen.blit(tinted, self.body_rect)
             else:
                 screen.blit(self.body_sprite, self.body_rect)
         else:
             color = (100, 50, 50) if self.flash_timer > 0 else (60, 30, 30)
-            pygame.draw.rect(screen, color, self.body_rect)
-            pygame.draw.rect(screen, (255, 255, 255), self.body_rect, 2)
+            pg.draw.rect(screen, color, self.body_rect)
+            pg.draw.rect(screen, (255, 255, 255), self.body_rect, 2)
 
         # Отрисовка головы ПОВЕРХ (спереди, перекрывает тело)
         if self.head_sprite:
             if self.flash_timer > 0:
                 tinted = self.head_sprite.copy()
-                tinted.fill((255, 0, 0, 100), special_flags=pygame.BLEND_RGBA_MULT)
+                tinted.fill((255, 0, 0, 100), special_flags=pg.BLEND_RGBA_MULT)
                 screen.blit(tinted, self.head_rect)
             else:
                 screen.blit(self.head_sprite, self.head_rect)
         else:
             color = (150, 50, 50) if self.flash_timer > 0 else (100, 30, 30)
-            pygame.draw.rect(screen, color, self.head_rect)
-            pygame.draw.rect(screen, (255, 255, 255), self.head_rect, 2)
+            pg.draw.rect(screen, color, self.head_rect)
+            pg.draw.rect(screen, (255, 255, 255), self.head_rect, 2)
