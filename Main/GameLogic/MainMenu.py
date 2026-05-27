@@ -8,30 +8,27 @@ import os
 class Menu:
     def __init__(self, surface, title="UNDERFEFU"):
         self.surface = surface
-        self.active = True  # Активность меню
+        self.active = True
         self.font = pg.font.Font(MAIN_FONT, 72)
 
-        # Параметры для анимации выдвигающегося текста с названием игры
+        # Параметры для анимации
         self.alpha = 0
         self.fade_speed = 2
         self.anim_speed = 4
         self.start_time = pg.time.get_ticks()
 
-        # Прицепляем шрифт к заголовку игры
         self.title = self.font.render(title, True, "White")
         self.start_position = 50
         self.rect_title = self.title.get_rect(center=(SCREEN_WIDTH // 2, self.start_position))
         self.title.set_alpha(self.alpha)
 
-        self.delay_timer = 3000  # Таймер для появления заголовка игры
+        self.delay_timer = 3000
         self.anim_started = False
         self.anim_completed = False
 
-        # Звук крутой
         self.sound_effect = pg.mixer.Sound("../Sounds/ApperanceTitleSound.mp3")
         self.sound_effect_played = False
 
-        # Приколы для items
         self.item_font = pg.font.Font(MAIN_FONT, 48)
         self.items = ["START", "SETTINGS", "EXIT"]
         self.selected = 0
@@ -39,11 +36,9 @@ class Menu:
         self.items_alpha = [0, 0, 0]
         self.fade_speed_item = 4
 
-        # звук для items
         self.sound_items_effect = pg.mixer.Sound("../Sounds/mus_ohyes_1.mp3")
         self.sound_items_effect.set_volume(0.3)
 
-        # Плавное дрожание
         self.shake_offset_x = 0
         self.shake_offset_y = 0
         self.shake_time = 0
@@ -52,12 +47,12 @@ class Menu:
         self.random_variation = 0
 
         # --- Переменные для игрового процесса ---
-        self.game_active = False  # Флаг активности игры
+        self.game_active = False
         self.game_map = None
         self.player = None
         self.camera = None
+        self.project_root = None  # ДОБАВЛЯЕМ ЭТОТ АТРИБУТ
 
-    # Анимация всякая
     def update(self):
         cur_time = pg.time.get_ticks()
         cur_duration = cur_time - self.start_time
@@ -83,23 +78,19 @@ class Menu:
             self.rect_title.center = (SCREEN_WIDTH // 2, self.start_position)
 
         if self.anim_completed:
-            # Плавное появление пунктов меню
             for i in range(len(self.items_alpha)):
                 self.items_alpha[i] += self.fade_speed_item
                 if self.items_alpha[i] >= 255:
                     self.items_alpha[i] = 255
 
-            # дрожание
             self.shake_time += self.base_speed
 
             if random.random() < 0.02:
                 self.random_variation = random.uniform(-0.5, 0.5)
 
-            # Комбинируем плавное движение со случайной вариацией
             self.shake_offset_x = (math.sin(self.shake_time) * self.base_amount) + self.random_variation
-            self.shake_offset_y = math.cos(self.shake_time * 1.5) * 1.5  # Меньше по вертикали
+            self.shake_offset_y = math.cos(self.shake_time * 1.5) * 1.5
 
-    # Отрисовка items
     def draw_menu(self):
         if self.active:
             self.surface.fill(BACKGROUND_COLOR)
@@ -108,7 +99,6 @@ class Menu:
             if self.anim_completed:
                 y_offset = 400
                 for i, item in enumerate(self.items):
-                    # Определяем цвет
                     if i == self.selected:
                         if i == 2:
                             color = "Red"
@@ -117,12 +107,10 @@ class Menu:
                     else:
                         color = "White"
 
-                    # Создаем текст
                     text_surface = self.item_font.render(item, True, color)
                     text_surface.set_alpha(self.items_alpha[i])
                     text_rect = text_surface.get_rect(center=(SCREEN_WIDTH // 2, y_offset))
 
-                    # Применяем плавное дрожание только к выбранному пункту
                     if i == self.selected:
                         text_rect.x += self.shake_offset_x
                         text_rect.y += self.shake_offset_y
@@ -132,24 +120,40 @@ class Menu:
 
     def start_game(self):
         try:
-            # Получаем путь к директории, где находится скрипт
             script_dir = os.path.dirname(os.path.abspath(__file__))
-
-            # Формируем полный путь к файлу карты (поднимаемся на уровень выше)
             project_root = os.path.dirname(os.path.dirname(script_dir))
-            map_path = os.path.join(project_root, "map", "location1", "corridor.tmx")
 
-            # Проверяем существование файла
+            # СОХРАНЯЕМ project_root В АТРИБУТ
+            self.project_root = project_root
+            print(f"DEBUG Menu.start_game: project_root = {self.project_root}")
+
+            # ПРОВЕРЯЕМ КАКИЕ ФАЙЛЫ СУЩЕСТВУЮТ
+            location1_path = os.path.join(project_root, "map", "location1")
+            print(f"Содержимое папки {location1_path}:")
+            if os.path.exists(location1_path):
+                for file in os.listdir(location1_path):
+                    print(f"  - {file}")
+
+            # Используем правильное имя файла (corridor.tmx вместо testlocation.tmx)
+            map_path = os.path.join(project_root, "map", "location1", "corridor.tmx")
+            print(f"DEBUG Menu.start_game: map_path = {map_path}")
+            print(f"Файл существует: {os.path.exists(map_path)}")
+
+            # Если corridor.tmx не найден, пробуем найти любой .tmx файл
             if not os.path.exists(map_path):
-                print(f"Ошибка: файл карты не найден по пути {map_path}")
-                return False
+                # Ищем первый попавшийся .tmx файл
+                for file in os.listdir(location1_path):
+                    if file.endswith('.tmx'):
+                        map_path = os.path.join(location1_path, file)
+                        print(f"Найден альтернативный файл: {map_path}")
+                        break
 
             # Создаем карту
-            self.game_map = TiledMap(map_path, scale=4)
+            self.game_map = TiledMap(map_path, scale=4, map_type="corridor")
 
             # Находим спавн и создаем игрока
             spawn_x, spawn_y = self.game_map.find_spawn()
-            print(f"Спавн найден: ({spawn_x}, {spawn_y})")  # ОТЛАДКА
+            print(f"Спавн найден: ({spawn_x}, {spawn_y})")
 
             self.player = Player(spawn_x, spawn_y, self.game_map)
 
@@ -159,15 +163,14 @@ class Menu:
             self.camera = Camera(self.surface.get_width(), self.surface.get_height(),
                                  map_pixel_width, map_pixel_height, scale=4)
 
-            print("Игра успешно загружена!")  # ОТЛАДКА
-            return True  # <-- ЭТО ВАЖНО! У ВАС ЭТОЙ СТРОКИ НЕТ!
+            print("Игра успешно загружена!")
+            return True
 
         except Exception as e:
             print(f"Ошибка загрузки игры: {e}")
             import traceback
-            traceback.print_exc()  # Показываем полную ошибку
+            traceback.print_exc()
             return False
-
 
     def update_game(self):
         if not self.game_active:
@@ -181,7 +184,6 @@ class Menu:
         if not self.game_active:
             return
 
-        # Отрисовка карты и игрока
         self.game_map.render(self.surface, self.camera)
         self.player.render(self.surface, self.camera)
 
@@ -205,10 +207,10 @@ class Menu:
                         self.game_active = True
                         return "start"
                     else:
+                        print("Ошибка: не удалось загрузить игру!")
                         return None
 
                 if self.selected == 1:  # SETTINGS
-                    # Здесь будет логика настроек
                     return None
 
                 if self.selected == 2:  # EXIT
@@ -218,12 +220,10 @@ class Menu:
 
     def run(self):
         if self.game_active:
-            # Если игра активна - обновляем и отрисовываем её
             self.update_game()
             self.draw_game()
             return True
         elif self.active:
-            # Если меню активно - отрисовываем меню
             self.draw_menu()
             self.update()
             return True

@@ -4,9 +4,11 @@ import os
 import pygame as pg
 import math
 
+
 class TiledMap:
     """Загрузка карты из .tmx с поддержкой масштабирования."""
-    def __init__(self, filename, scale=4):
+
+    def __init__(self, filename, scale=4, map_type="corridor"):
         self.filename = filename
         self.map_dir = os.path.dirname(filename)
         self.tilewidth = 16
@@ -16,6 +18,7 @@ class TiledMap:
         self.layers = []
         self.tilesets = []
         self.scale = scale
+        self.map_type = map_type  # "corridor" или "labyrinth"
         self._parse_map()
 
     def _parse_map(self):
@@ -79,6 +82,36 @@ class TiledMap:
 
             print(f"Загрузка изображения: {image_path}")
 
+            # ПРОВЕРЯЕМ СУЩЕСТВОВАНИЕ ФАЙЛА ИЗОБРАЖЕНИЯ
+            if not os.path.exists(image_path):
+                print(f"ПРЕДУПРЕЖДЕНИЕ: Файл изображения не найден: {image_path}")
+                print(f"Создаю заглушку для отсутствующего тайлсета")
+
+                # Создаем заглушку - Surface с прозрачным фоном
+                tilecount = int(ts_root.attrib.get('tilecount', 1))
+                columns = int(ts_root.attrib.get('columns', 1))
+
+                orig_tiles = []
+                scaled_tiles = []
+
+                for i in range(tilecount):
+                    # Создаем фиолетовую заглушку для отсутствующих тайлов
+                    tile_surface = pg.Surface((self.tilewidth, self.tileheight))
+                    tile_surface.fill((255, 0, 255))  # Ярко-розовый/фиолетовый для отладки
+                    # Добавляем рамку
+                    pg.draw.rect(tile_surface, (255, 255, 255), (0, 0, self.tilewidth, self.tileheight), 1)
+
+                    orig_tiles.append(tile_surface)
+                    scaled = pg.transform.scale(tile_surface,
+                                                (self.tilewidth * self.scale,
+                                                 self.tileheight * self.scale))
+                    scaled_tiles.append(scaled)
+
+                ts['tiles'] = orig_tiles
+                ts['scaled_tiles'] = scaled_tiles
+                print(f"Создана заглушка для {tilecount} тайлов")
+                continue
+
             try:
                 image = pg.image.load(image_path).convert_alpha()
             except pg.error as e:
@@ -101,19 +134,14 @@ class TiledMap:
                     tile_surface = pg.Surface((self.tilewidth, self.tileheight))
                     tile_surface.fill((255, 0, 0))
 
-                # === ЗАМЕНЯЕМ ДВЕРЬ (GID 15) НА КОРИЧНЕВЫЙ ПРЯМОУГОЛЬНИК ===
                 current_gid = ts['firstgid'] + i
-                if current_gid == 15:
+                if current_gid == 15 and self.map_type == "corridor":
                     print(f"  Замена двери GID 15 на коричневый цвет")
-                    # Создаём коричневый прямоугольник вместо текстуры двери
                     tile_surface = pg.Surface((self.tilewidth, self.tileheight))
-                    tile_surface.fill((139, 69, 19))  # Коричневый цвет
-                    # Добавим рамку для эффекта двери
+                    tile_surface.fill((139, 69, 19))
                     pg.draw.rect(tile_surface, (101, 67, 33), (0, 0, self.tilewidth, self.tileheight), 2)
 
                 orig_tiles.append(tile_surface)
-
-                # Масштабируем
                 scaled = pg.transform.scale(tile_surface,
                                             (self.tilewidth * self.scale,
                                              self.tileheight * self.scale))
@@ -124,12 +152,6 @@ class TiledMap:
 
             print(f"Загружено {len(orig_tiles)} тайлов, firstgid={ts['firstgid']}")
 
-            # Проверяем, где находится GID 15
-            if ts['firstgid'] <= 15 < ts['firstgid'] + len(orig_tiles):
-                tile_index = 15 - ts['firstgid']
-                print(f"  GID 15 заменён на коричневый цвет, индекс={tile_index}")
-
-
     def get_tile_surface(self, gid, scaled=False):
         if gid == 0:
             return None
@@ -137,113 +159,75 @@ class TiledMap:
             firstgid = ts['firstgid']
             tiles = ts['scaled_tiles'] if scaled else ts['tiles']
             if tiles and firstgid <= gid < firstgid + len(tiles):
-                tile = tiles[gid - firstgid]
-
-                # Отладка для двери (GID 15)
-                if gid == 15:
-                    expected_size = (self.tilewidth * self.scale if scaled else self.tilewidth)
-                    print(f"GID 15: размер={tile.get_width()}x{tile.get_height()}, ожидалось={expected_size}")
-
-                return tile
-        return None
-
-    def get_tile_gid(self, x, y, layer=0):
-        tx = int(x // self.tilewidth)
-        ty = int(y // self.tileheight)
-        if 0 <= tx < self.width and 0 <= ty < self.height:
-            return self.layers[layer][ty][tx]
+                return tiles[gid - firstgid]
         return None
 
     def is_walkable(self, rect):
+        """Проверка коллизий в зависимости от типа карты"""
+        if self.map_type == "corridor":
+            return self._is_walkable_corridor(rect)
+        else:
+            return self._is_walkable_labyrinth(rect)
+
+    def _is_walkable_corridor(self, rect):
+        """Коллизии для коридора - прямоугольная область"""
+        min_x = 425
+        max_x = 536
+        min_y = 80
+        max_y = 872
+
+        left = rect.left
+        right = rect.right
+        top = rect.top
+        bottom = rect.bottom
+
+        if (left >= min_x and right <= max_x and
+                top >= min_y and bottom <= max_y):
+            return True
+        return False
+
+    def _is_walkable_labyrinth(self, rect):
+        """Коллизии для лабиринта - только в заданных прямоугольных областях"""
+        # Получаем центр игрока
         px = rect.centerx
         py = rect.centery
 
-        # === РАЗРЕШЕННЫЕ ЗОНЫ (игрок может здесь ходить всегда) ===
-        # Основная комната
-        if 420 <= px <= 550 and 272 <= py <= 420:
-            return True
+        # ДОПУСТИМЫЕ ОБЛАСТИ (прямоугольники, где можно ходить)
+        walkable_zones = [
+            (580, 33, 697, 270),  # Зона 1
+            (538, 276, 757, 741),  # Зона 2
+            (409, 459, 478, 753),  # Зона 3
+            (16, 639, 397, 702),  # Зона 4
+            (73, 48, 127, 720),  # Зона 5
+            (526, 735, 643, 948),  # Зона 6
+            (784, 582, 1267, 648),  # Зона 7
+            (724, 321, 931, 366),  # Зона 8
+            (841, 111, 931, 366),  # Зона 9
+            (928, 138, 1273, 210),  # Зона 10
+            (582, 260, 687, 1200),  # Зона 11 - БОЛЬШОЙ ЗАЛ (добавлена новая зона)
+            (350, 698, 800, 587)
+        ]
 
-        # Коридор справа (x=538, y от 80 до 138)
-        if abs(px - 538) < 8 and 80 <= py <= 138:
-            return True
+        # Проверяем, находится ли игрок в любой из допустимых зон
+        for x1, y1, x2, y2 in walkable_zones:
+            # Нормализуем координаты (чтобы x1 <= x2 и y1 <= y2)
+            min_x = min(x1, x2)
+            max_x = max(x1, x2)
+            min_y = min(y1, y2)
+            max_y = max(y1, y2)
 
-        # === ЗАПРЕЩЕННЫЕ ЗОНЫ ===
-        # Точки и линии, где игрок НЕ может находиться
+            if min_x <= px <= max_x and min_y <= py <= max_y:
+                return True
 
-        # Точка (576, 160)
-        if abs(px - 576) < 8 and abs(py - 160) < 8:
-            return False
-
-        # Точка (400, 158)
-        if abs(px - 400) < 8 and abs(py - 158) < 8:
-            return False
-
-        # Вертикальная линия x=367, y от 576 до 704
-        if abs(px - 367) < 8 and 576 <= py <= 704:
-            return False
-
-        # Вертикальная линия x=594, y от 576 до 704
-        if abs(px - 594) < 8 and 576 <= py <= 704:
-            return False
-
-        # Вертикальная линия x=416, y от 80 до 144
-        if abs(px - 416) < 8 and 80 <= py <= 144:
-            return False
-
-        # Вертикальная линия x=545, y от 80 до 144
-        if abs(px - 545) < 8 and 80 <= py <= 144:
-            return False
-
-        # Вертикальная линия x=556, y от 78 до 140
-        if px <= 400 and 78 <= py <= 144:
-            return False
-
-        # Горизонтальная линия y=79, x от 415 до 545
-        if abs(py - 79) < 8 and 415 <= px <= 545:
-            return False
-
-        # Горизонтальная линия y=160, x от 384 до 400
-        if py >= 144 and px <= 400:
-            return False
-
-        # Горизонтальная линия y=158, x от 560 до 578
-        if abs(py - 158) < 8 and 560 <= px <= 578:
-            return False
-
-        # Горизонтальная линия y=64, x от 538 до 546
-        if abs(py - 64) < 8 and 538 <= px <= 546:
-            return False
-
-        # === ОБЫЧНАЯ ПРОВЕРКА ТАЙЛОВ ===
-        left = rect.left // self.tilewidth
-        right = (rect.right - 1) // self.tilewidth
-        top = rect.top // self.tileheight
-        bottom = (rect.bottom - 1) // self.tileheight
-
-        for ty in range(top, bottom + 1):
-            for tx in range(left, right + 1):
-                if tx < 0 or tx >= self.width or ty < 0 or ty >= self.height:
-                    return False
-
-                gid_main = self.layers[0][ty][tx]
-
-                # Непроходимые тайлы
-                if gid_main in [15, 16, 17, 19, 20, 21, 0]:
-                    return False
-
-                if len(self.layers) > 1:
-                    gid_decor = self.layers[1][ty][tx]
-                    if gid_decor != 0:
-                        return False
-
-        return True
+        # Если не в допустимой зоне - ходить нельзя
+        return False
 
     def find_spawn(self, layer=0):
-        # Ищем тайл с GID=1 или любым другим специальным значением
+        # Ищем тайл с GID=1 или 10
         for y in range(self.height):
             for x in range(self.width):
                 gid = self.layers[layer][y][x]
-                if gid == 1:  # Ищем специальный тайл спавна
+                if gid == 1 or gid == 10:
                     print(f"Спавн найден на позиции ({x}, {y}) с GID={gid}")
                     return (x * self.tilewidth + self.tilewidth // 2,
                             y * self.tileheight + self.tileheight // 2)
@@ -274,9 +258,8 @@ class TiledMap:
                     if gid == 0:
                         continue
 
-                    # Пропускаем отрисовку оригинальной двери
-                    if gid == 15:
-                        continue  # Не рисуем размытую дверь
+                    if gid == 15 and self.map_type == "corridor":
+                        continue
 
                     tile = self.get_tile_surface(gid, scaled=True)
                     if tile:
@@ -286,14 +269,20 @@ class TiledMap:
                         screen_y = (world_y - cam_y) * scale
                         surface.blit(tile, (screen_x, screen_y))
 
-        # === РИСУЕМ НОВУЮ ДВЕРЬ ПОВЕРХ ===
-        # Координаты двери на карте (30,2) - подняли на 2 тайла выше (было 4, стало 2)
-        door_x = 30
-        door_y = 2  # Было 4, стало 2
-        door_width = 2  # тайла
-        door_height = 3  # тайла
+        # Рисуем дверь только для коридора
+        if self.map_type == "corridor":
+            self._render_door(surface, camera)
 
-        # Рисуем каждый тайл двери
+    def _render_door(self, surface, camera):
+        """Отрисовка двери на карте коридора"""
+        cam_x, cam_y = camera.x, camera.y
+        scale = camera.scale
+
+        door_x = 30
+        door_y = 2
+        door_width = 2
+        door_height = 3
+
         for dy in range(door_height):
             for dx in range(door_width):
                 world_x = (door_x + dx) * self.tilewidth
@@ -301,20 +290,15 @@ class TiledMap:
                 screen_x = (world_x - cam_x) * scale
                 screen_y = (world_y - cam_y) * scale
 
-                # Создаём коричневый прямоугольник для каждого тайла
                 door_tile = pg.Surface((self.tilewidth * scale, self.tileheight * scale))
-                door_tile.fill((139, 69, 19))  # Коричневый цвет
-
-                # Добавляем рамку для каждого тайла
+                door_tile.fill((139, 69, 19))
                 pg.draw.rect(door_tile, (101, 67, 33), (0, 0, door_tile.get_width(), door_tile.get_height()), 2)
 
-                # Рисуем ручку на центральном тайле
-                if dx == 1 and dy == 1:  # Центр двери
+                if dx == 1 and dy == 1:
                     pg.draw.circle(door_tile, (255, 215, 0),
                                    (door_tile.get_width() - 8, door_tile.get_height() // 2), 4)
 
                 surface.blit(door_tile, (screen_x, screen_y))
-
 
 class Camera:
     """Камера с масштабированием, следующая за целью."""
@@ -348,35 +332,251 @@ class Camera:
 
 
 class Player:
-    """Игрок – красный квадрат."""
+    """Игрок с анимацией движения в 4 направлениях."""
+
     def __init__(self, x, y, game_map):
-        self.rect = pg.Rect(x - 8, y - 8, 16, 16)
-        self.speed = 2
+        # ВИЗУАЛЬНЫЙ размер (то, что мы видим на экране)
+        self.visual_size = 96
+        self.hitbox_size = 16
+
+        # Хитбокс (для физики и коллизий)
+        self.rect = pg.Rect(x - self.hitbox_size // 2, y - self.hitbox_size // 2,
+                            self.hitbox_size, self.hitbox_size)
+
+        self.speed = 3
         self.map = game_map
+
+        # Получаем корневую директорию проекта
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        self.project_root = os.path.dirname(os.path.dirname(current_dir))
+
+        # Загрузка спрайтов
+        self.sprites = self._load_sprites()
+
+        # Анимация
+        self.current_direction = 'down'
+        self.current_frame = 0
+        self.animation_speed = 0.25  # Увеличил для замедления анимации (было 0.15)
+        self.animation_timer = 0
+        self.is_moving = False
+
         self.color = (255, 0, 0)
+
+    def _load_sprites(self):
+        """Загружает все спрайты игрока"""
+        sprites = {
+            'down': {},
+            'up': {},
+            'left': {},
+            'right': {}
+        }
+
+        # Загружаем спрайты для направления ВНИЗ (3 кадра: step1 -> standing -> step2)
+        down_standing = self._load_sprite('standing_down.png')
+        down_walk1 = self._load_sprite('walk_down_step_1.png')
+        down_walk2 = self._load_sprite('walk_down_step_2.png')
+
+        if down_standing:
+            sprites['down']['standing'] = down_standing
+            # Создаем последовательность кадров для анимации
+            if down_walk1 and down_walk2:
+                sprites['down']['walk_frames'] = [down_walk1, down_standing, down_walk2]
+            elif down_walk1:
+                sprites['down']['walk_frames'] = [down_walk1, down_standing, down_walk1]
+            else:
+                sprites['down']['walk_frames'] = [down_standing]
+
+        # Загружаем спрайты для направления ВВЕРХ (3 кадра: step1 -> standing -> step2)
+        up_standing = self._load_sprite('standing_up.png')
+        up_walk1 = self._load_sprite('walk_up_step_1.png')
+        up_walk2 = self._load_sprite('walk_up_step_2.png')
+
+        if up_standing:
+            sprites['up']['standing'] = up_standing
+            if up_walk1 and up_walk2:
+                sprites['up']['walk_frames'] = [up_walk1, up_standing, up_walk2]
+            elif up_walk1:
+                sprites['up']['walk_frames'] = [up_walk1, up_standing, up_walk1]
+            else:
+                sprites['up']['walk_frames'] = [up_standing]
+
+        # Загружаем спрайты для направления ВЛЕВО (3 кадра: walk1 -> walk2 -> standing)
+        left_standing = self._load_sprite('standing_left.png')
+        left_walk1 = self._load_sprite('walk_left_1.png')
+        left_walk2 = self._load_sprite('walk_left_1_2.png')
+
+        if left_standing:
+            sprites['left']['standing'] = left_standing
+            if left_walk1 and left_walk2:
+                sprites['left']['walk_frames'] = [left_walk1, left_walk2, left_standing]
+            elif left_walk1:
+                sprites['left']['walk_frames'] = [left_walk1, left_standing, left_walk1]
+            else:
+                sprites['left']['walk_frames'] = [left_standing]
+
+        # Для направления ВПРАВО - зеркально отражаем левые спрайты
+        if 'walk_frames' in sprites['left']:
+            sprites['right']['walk_frames'] = [
+                pg.transform.flip(frame, True, False)
+                for frame in sprites['left']['walk_frames']
+            ]
+            sprites['right']['standing'] = sprites['right']['walk_frames'][-1]  # Последний кадр - стоячий
+
+        # Проверяем, что все спрайты загружены, если нет - создаем заглушки
+        for direction in sprites:
+            if 'walk_frames' not in sprites[direction] or not sprites[direction]['walk_frames']:
+                sprites[direction] = self._create_fallback_sprite(direction)
+            if 'standing' not in sprites[direction]:
+                sprites[direction]['standing'] = sprites[direction]['walk_frames'][0]
+
+        return sprites
+
+    def _load_sprite(self, filename):
+        """Загружает один спрайт и масштабирует его до ВИЗУАЛЬНОГО размера"""
+        # Поддерживаем оба расширения
+        for ext in ['', '.png', '.PNG']:
+            test_filename = filename.replace('.png', '').replace('.PNG', '') + ext
+            file_path = os.path.join(self.project_root, 'Main', 'Sprites', 'Player', test_filename)
+
+            try:
+                if os.path.exists(file_path):
+                    sprite = pg.image.load(file_path)
+
+                    if sprite.get_alpha() is None:
+                        sprite = sprite.convert()
+                        bg_color = sprite.get_at((0, 0))
+                        sprite.set_colorkey(bg_color)
+                        sprite = sprite.convert_alpha()
+                    else:
+                        sprite = sprite.convert_alpha()
+
+                    # Масштабируем до ВИЗУАЛЬНОГО размера
+                    sprite = pg.transform.scale(sprite, (self.visual_size, self.visual_size))
+
+                    print(f"Загружен: {test_filename}")
+                    return sprite
+            except Exception as e:
+                continue
+
+        print(f"Файл не найден: {filename}")
+        return None
+
+    def _create_fallback_sprite(self, direction):
+        """Создает простой цветной спрайт-заглушку для отладки"""
+        sprite = pg.Surface((self.visual_size, self.visual_size), pg.SRCALPHA)
+
+        colors = {
+            'down': (255, 0, 0, 255),
+            'up': (0, 255, 0, 255),
+            'left': (0, 0, 255, 255),
+            'right': (255, 255, 0, 255)
+        }
+
+        sprite.fill(colors.get(direction, (255, 255, 255, 255)))
+
+        center = self.visual_size // 2
+        eye_color = (255, 255, 255)
+
+        if direction == 'down':
+            pg.draw.circle(sprite, eye_color, (center - 10, center + 5), 5)
+            pg.draw.circle(sprite, eye_color, (center + 10, center + 5), 5)
+        elif direction == 'up':
+            pg.draw.circle(sprite, eye_color, (center - 10, center - 5), 5)
+            pg.draw.circle(sprite, eye_color, (center + 10, center - 5), 5)
+        else:
+            pg.draw.circle(sprite, eye_color, (center - 10, center), 5)
+            pg.draw.circle(sprite, eye_color, (center + 10, center), 5)
+
+        return {
+            'walk_frames': [sprite],
+            'standing': sprite
+        }
 
     def update(self, keys):
         dx, dy = 0, 0
-        if keys[pg.K_w]:
+
+        moving_up = keys[pg.K_w]
+        moving_down = keys[pg.K_s]
+        moving_left = keys[pg.K_a]
+        moving_right = keys[pg.K_d]
+
+        if moving_up:
             dy -= self.speed
-        if keys[pg.K_s]:
+            self.current_direction = 'up'
+            self.is_moving = True
+        elif moving_down:
             dy += self.speed
-        if keys[pg.K_a]:
+            self.current_direction = 'down'
+            self.is_moving = True
+        elif moving_left:
             dx -= self.speed
-        if keys[pg.K_d]:
+            self.current_direction = 'left'
+            self.is_moving = True
+        elif moving_right:
             dx += self.speed
+            self.current_direction = 'right'
+            self.is_moving = True
+        else:
+            self.is_moving = False
+
+        # Движение с проверкой коллизий по ХИТБОКСУ
         if dx != 0:
             new_rect = self.rect.move(dx, 0)
             if self.map.is_walkable(new_rect):
                 self.rect = new_rect
+
         if dy != 0:
             new_rect = self.rect.move(0, dy)
             if self.map.is_walkable(new_rect):
                 self.rect = new_rect
 
+        self._update_animation()
+
+    def _update_animation(self):
+        """Обновляет анимацию"""
+        if self.is_moving:
+            self.animation_timer += 1
+            # Используем FPS для корректной скорости анимации
+            if self.animation_timer >= self.animation_speed * 60:
+                self.animation_timer = 0
+                # Получаем количество кадров для текущего направления
+                frames = self.sprites[self.current_direction]['walk_frames']
+                max_frames = len(frames)
+                self.current_frame = (self.current_frame + 1) % max_frames
+        else:
+            # Когда стоим на месте, показываем стоячий кадр (обычно последний)
+            frames = self.sprites[self.current_direction]['walk_frames']
+            self.current_frame = len(frames) - 1  # Последний кадр - стоячий
+            self.animation_timer = 0
+
+    def _get_current_sprite(self):
+        """Возвращает текущий спрайт"""
+        direction = self.sprites[self.current_direction]
+        frames = direction['walk_frames']
+
+        if self.current_frame < len(frames):
+            return frames[self.current_frame]
+        return frames[0]
+
     def render(self, screen, camera):
-        screen_rect = camera.apply(self.rect)
-        pg.draw.rect(screen, self.color, screen_rect)
+        """Отрисовка игрока (визуальный спрайт больше хитбокса)"""
+        try:
+            current_sprite = self._get_current_sprite()
+
+            # Применяем камеру к ХИТБОКСУ
+            screen_rect = camera.apply(self.rect)
+
+            # Смещаем отрисовку, чтобы спрайт был по центру хитбокса
+            offset_x = screen_rect.x - (self.visual_size - self.hitbox_size) // 2
+            offset_y = screen_rect.y - (self.visual_size - self.hitbox_size) // 2
+
+            screen.blit(current_sprite, (offset_x, offset_y))
+
+        except Exception as e:
+            screen_rect = camera.apply(self.rect)
+            pg.draw.rect(screen, self.color, screen_rect)
+            print(f"Ошибка отрисовки: {e}")
+
 
 class MalishevBoss:
     def __init__(self, screen, battle_ui, ui_scale=1.0):

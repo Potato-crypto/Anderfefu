@@ -59,7 +59,7 @@ class SplashScreen:
 
         # Исправленные пути к изображениям (используем абсолютные пути)
         default_image_paths = [
-            os.path.join(script_dir, "texture/SplashScreen/TwoRace.jpg"),
+            os.path.join(script_dir, "../texture/SplashScreen/TwoRace.jpg"),
             os.path.join(script_dir, "texture/SplashScreen/TwoRace.jpg"),
             os.path.join(script_dir, "texture/SplashScreen/2.jpg"),
             os.path.join(script_dir, "texture/SplashScreen/3.jpg"),

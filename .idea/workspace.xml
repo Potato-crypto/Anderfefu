@@ -4,24 +4,47 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="95355c3c-6fe2-4a92-bb5c-31f96545ea3e" name="Changes" comment="Чутка изменил attacks (добавил коммент) &#10;Спешиал фор Наталья">
-      <change afterPath="$PROJECT_DIR$/map/location1/corridor.tmx" afterDir="false" />
+    <list default="true" id="95355c3c-6fe2-4a92-bb5c-31f96545ea3e" name="Changes" comment="Добавил первую карту в игру (начальный коридор)">
+      <change afterPath="$PROJECT_DIR$/Main/Sprites/Player/walk_down_step_2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/map/location2/brick.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/map/location2/brick1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/map/location2/brick2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/map/location2/brick4.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/map/location2/collisionbrick.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/map/location2/door1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/map/location2/door2 (1).png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/map/location2/door2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/map/location2/door3.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/map/location2/floor1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/map/location2/tileset.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/map/location2/tileset1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/map/location2/tileset1.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/map/location2/tileset2.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/map/location2/tileset3.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/map/location2/tree.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/map/location2/tree1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/map/location2/tree2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/map/location2/tree3.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/map/location2/window.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/map/location2/window1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/map/location2/window2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/map/location2/window3.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/map/location2/window4.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/map/location2/window5.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/map/location2/window6.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/map/location2/window7.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/map/location2/лабиринт.tmx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main/GameLogic/Game.py" beforeDir="false" afterPath="$PROJECT_DIR$/Main/GameLogic/Game.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main/GameLogic/MainGameClasses.py" beforeDir="false" afterPath="$PROJECT_DIR$/Main/GameLogic/MainGameClasses.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main/GameLogic/MainMenu.py" beforeDir="false" afterPath="$PROJECT_DIR$/Main/GameLogic/MainMenu.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main/GameLogic/debug_tile_15.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Main/GameLogic/logic.py" beforeDir="false" afterPath="$PROJECT_DIR$/Main/GameLogic/logic.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/map/location1/brick1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/map/location1/brick1.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/map/location1/brick2.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/map/location1/brick2.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/map/location1/brick4.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/map/location1/brick4.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/map/location1/collision_brick.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/map/location1/collision_brick.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/map/location1/floor1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/map/location1/floor1.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/map/location1/testlocation.tmx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main/Sprites/Player/IMG_0908.PNG" beforeDir="false" afterPath="$PROJECT_DIR$/Main/Sprites/Player/walk_down_step_1.PNG" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main/Sprites/Player/IMG_0909.PNG" beforeDir="false" afterPath="$PROJECT_DIR$/Main/Sprites/Player/standing_down.PNG" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main/Sprites/Player/IMG_0910.PNG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main/Sprites/Player/IMG_0911.PNG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main/Sprites/Player/IMG_0912.PNG" beforeDir="false" afterPath="$PROJECT_DIR$/Main/Sprites/Player/standing_left.PNG" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,7 +61,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="feature/test_boss_fight" />
+        <entry key="$PROJECT_DIR$" value="feature/boss_fight_Ivanov" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -74,8 +97,8 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;feature/boss__fight__Ivanov&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/dev/game/Anderfefu/map/location1&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feature/map__integration&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/dev/game/Anderfefu/map/location2&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.grazie&quot;
   },
   &quot;keyToStringList&quot;: {
@@ -84,11 +107,11 @@
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\dev\game\Anderfefu\map\location2" />
+      <recent name="C:\dev\game\Anderfefu\Main\Sprites\Player" />
       <recent name="C:\dev\game\Anderfefu\map\location1" />
       <recent name="C:\AnderFefu\Anderfefu\Main\Sounds" />
       <recent name="C:\AnderFefu\Anderfefu\Main\soundtrack" />
-      <recent name="C:\Users\Tomato\PycharmProjects\Andertaile\Main\Sounds" />
-      <recent name="C:\Users\Tomato\PycharmProjects\Andertaile\Main\Images" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\dev\game\Anderfefu\map\location1" />
@@ -275,7 +298,15 @@
       <option name="project" value="LOCAL" />
       <updated>1778591810914</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Добавил первую карту в игру (начальный коридор)">
+      <option name="closed" value="true" />
+      <created>1779322104330</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1779322104330</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -294,6 +325,7 @@
     <MESSAGE value="Файл для пуска" />
     <MESSAGE value="Готовый первый босс файт" />
     <MESSAGE value="Чутка изменил attacks (добавил коммент) &#10;Спешиал фор Наталья" />
-    <option name="LAST_COMMIT_MESSAGE" value="Чутка изменил attacks (добавил коммент) &#10;Спешиал фор Наталья" />
+    <MESSAGE value="Добавил первую карту в игру (начальный коридор)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Добавил первую карту в игру (начальный коридор)" />
   </component>
 </project>
