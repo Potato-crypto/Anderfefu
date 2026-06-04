@@ -1,4 +1,4 @@
-import pygame
+import Dvishok as pygame
 import math
 
 class IvanovBoss:

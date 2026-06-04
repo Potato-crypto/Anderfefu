@@ -1,4 +1,4 @@
-import pygame
+import Dvishok as pygame
 import sys
 import os
 import math
@@ -7,10 +7,6 @@ import math
 НИЖЕ КЛАСС ДЛЯ ОТОБРАЖЕНИЯ ЗАСТАВКИ (test_splash.py АКТИВАЦИЯ ЗАСТАВКИ)
 '''
 
-import pygame
-import sys
-import os
-import math
 
 
 class SplashScreen:
@@ -60,19 +56,18 @@ class SplashScreen:
         # Исправленные пути к изображениям (используем абсолютные пути)
         default_image_paths = [
             os.path.join(script_dir, "../texture/SplashScreen/TwoRace.jpg"),
-            os.path.join(script_dir, "texture/SplashScreen/TwoRace.jpg"),
-            os.path.join(script_dir, "texture/SplashScreen/2.jpg"),
-            os.path.join(script_dir, "texture/SplashScreen/3.jpg"),
-            os.path.join(script_dir, "texture/SplashScreen/3.1.jpg"),
+            os.path.join(script_dir, "../texture/SplashScreen/2.jpg"),
+            os.path.join(script_dir, "../texture/SplashScreen/3.jpg"),
+            os.path.join(script_dir, "../texture/SplashScreen/3.1.jpg"),
             None,
             None,
             os.path.join(script_dir, "../SplashScreen/FEFUT.jpg"),
-            os.path.join(script_dir, "texture/SplashScreen/4.jpg"),
-            os.path.join(script_dir, "texture/SplashScreen/5.jpg"),
-            os.path.join(script_dir, "texture/SplashScreen/6.jpg"),
-            os.path.join(script_dir, "texture/SplashScreen/7.jpg"),
-            os.path.join(script_dir, "texture/SplashScreen/7.1.jpg"),
-            os.path.join(script_dir, "texture/SplashScreen/8.jpg"),
+            os.path.join(script_dir, "../texture/SplashScreen/4.jpg"),
+            os.path.join(script_dir, "../texture/SplashScreen/5.jpg"),
+            os.path.join(script_dir, "../texture/SplashScreen/6.jpg"),
+            os.path.join(script_dir, "../texture/SplashScreen/7.jpg"),
+            os.path.join(script_dir, "../texture/SplashScreen/7.1.jpg"),
+            os.path.join(script_dir, "../texture/SplashScreen/8.jpg"),
         ]
 
         default_font_size = 17
@@ -368,7 +363,7 @@ class SplashScreen:
 
 
 '''
-НИЖЕ КЛАСС ДЛЯ ИНИЦИАЛИЗАЦИИ БОЯ (test_battle.py АКТИВАЦИЯ БОЯ, ОШИБКИ ВОЗМОЖНО ЕСТЬ Я ХЗ)
+НИЖЕ КЛАСС ДЛЯ ИНИЦИАЛИЗАЦИИ БОЯ (Malishev_battle.py АКТИВАЦИЯ БОЯ, ОШИБКИ ВОЗМОЖНО ЕСТЬ Я ХЗ)
 '''
 
 class BattleUI:
@@ -804,7 +799,7 @@ class BattleUI:
             self.screen.blit(text_surf, text_rect)
 
 '''
-НИЖЕ КЛАСС ДЛЯ САМОГО БОЯ (test_battle.py ВМЕСТЕ С BattleUI, ТРЕБУЮТСЯ ИЗМЕНЕНИЯ)
+НИЖЕ КЛАСС ДЛЯ САМОГО БОЯ (Malishev_battle.py ВМЕСТЕ С BattleUI, ТРЕБУЮТСЯ ИЗМЕНЕНИЯ)
 '''
 
 class BattleMiniGame:

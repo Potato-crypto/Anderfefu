@@ -1,20 +1,29 @@
-# test_battle.py
+import os
 import pygame as pg
 import sys
 import random
-from logic import BattleUI
-from MainGameClasses import MalishevBoss
-from attacks import FlyingBooks, ExamPapers, PointerLaser, FallingPapers, CombinedAttack
+from Main.GameLogic.logic import BattleUI
+from Main.GameLogic.MainGameClasses import MalishevBoss
+from Main.GameLogic.attacks import FlyingBooks, ExamPapers, PointerLaser, FallingPapers, CombinedAttack
 
 
-def main():
-    pg.init()
-    pg.mixer.init()
+def run_boss_battle(screen):
+    """Запускает битву с боссом и возвращает True при победе, False при поражении"""
+
+    # Получаем корневую директорию проекта для правильных путей к звукам
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.dirname(os.path.dirname(script_dir))
+
+    info = pg.display.Info()
+    screen_width = info.current_w
+    screen_height = info.current_h
+
+    clock = pg.time.Clock()
 
     # ===== ЗВУКИ =====
-    BATTLE_MUSIC_PATH = "../soundtrack/alexander-nakarada-chase(chosic.com).mp3"
-    BOSS_SPEAK_SOUND_PATH = "../Sounds/long-typing-on-the-keyboard.mp3"
-    BUTTON_CLICK_SOUND_PATH = "../Sounds/mus_ohyes_1.mp3"
+    BATTLE_MUSIC_PATH = os.path.join(project_root, "soundtrack", "alexander-nakarada-chase(chosic.com).mp3")
+    BOSS_SPEAK_SOUND_PATH = os.path.join(project_root, "Sounds", "long-typing-on-the-keyboard.mp3")
+    BUTTON_CLICK_SOUND_PATH = os.path.join(project_root, "Sounds", "mus_ohyes_1.mp3")
 
     # Фоновая музыка
     try:
@@ -39,14 +48,6 @@ def main():
     except Exception as e:
         print("Не удалось загрузить звук кнопки:", e)
         button_click_sound = None
-
-    info = pg.display.Info()
-    screen_width = info.current_w
-    screen_height = info.current_h
-
-    screen = pg.display.set_mode((screen_width, screen_height), pg.FULLSCREEN)
-    pg.display.set_caption("Malishev Boss Battle")
-    clock = pg.time.Clock()
 
     UI_SCALE = min(screen_width / 800, screen_height / 600)
 
@@ -107,6 +108,11 @@ def main():
     boss_hp_max = 100
     boss_hp_current = boss_hp_max
 
+    # Функция для воспроизведения звука речи
+    def play_boss_sound():
+        if boss_speak_sound:
+            boss_speak_sound.play()
+
     # Начальный диалог со звуком
     boss.show_dialogue([
         "Слушай внимательно, студент...",
@@ -114,8 +120,7 @@ def main():
         "Уклоняйся от моих атак!",
         "Продержись 30 секунд!"
     ])
-    if boss_speak_sound:
-        boss_speak_sound.play()
+    play_boss_sound()
 
     STATE_MAIN = 0
     STATE_ACTION = 1
@@ -165,7 +170,7 @@ def main():
     end_phase = False
     end_timer = 0
 
-    running = True
+    victory = False
 
     def reset_player_position():
         player_rect.centerx = battle_ui.text_area_rect.centerx
@@ -203,22 +208,16 @@ def main():
 
     def start_battle():
         nonlocal current_state, current_attack_name, attack_timer, battle_start_time, switch_phase, end_phase
-
         battle_start_time = pg.time.get_ticks()
         switch_phase = PHASE_ATTACK
         attack_timer = 0
         end_phase = False
-
         current_attack_name = random.choice(boss.patterns[boss.phase])
         minigame = create_attack(current_attack_name)
         boss.start_attack(current_attack_name, minigame)
         current_state = STATE_BATTLE
 
-    # Функция для воспроизведения звука речи
-    def play_boss_sound():
-        if boss_speak_sound:
-            boss_speak_sound.play()
-
+    running = True
     while running:
         battle_ui.current_messages = []
         mouse_clicked = False
@@ -230,16 +229,12 @@ def main():
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 running = False
+                victory = False
                 break
             if event.type == pg.MOUSEBUTTONDOWN:
                 mouse_clicked = True
 
             result = battle_ui.handle_event(event)
-
-            # Звук клика по кнопке
-            if result >= 0 or result >= 1000:
-                if button_click_sound:
-                    button_click_sound.play()
 
             if result == -2:
                 if current_state == STATE_ACTION:
@@ -270,6 +265,7 @@ def main():
                         boss.show_dialogue(["Ты победил меня!"])
                         play_boss_sound()
                         pg.time.wait(3000)
+                        victory = True
                         running = False
 
                 elif result == 1:
@@ -286,6 +282,7 @@ def main():
                         if random.random() < 0.3:
                             boss.show_dialogue(["Ты пощадил меня!"])
                             play_boss_sound()
+                            victory = True
                             running = False
                         else:
                             boss.show_dialogue(["Не дождёшься!"])
@@ -353,27 +350,24 @@ def main():
             if progress >= 1.0:
                 start_battle()
 
-        # === ЛОГИКА БОЯ ===
+        # Логика боя
         if current_state == STATE_BATTLE and not end_phase:
             elapsed_total = pg.time.get_ticks() - battle_start_time
 
-            # Проверка конца боя
             if elapsed_total >= total_battle_duration:
                 end_phase = True
                 end_timer = 0
+                victory = True
                 if boss.current_minigame and hasattr(boss.current_minigame, 'destroy_all'):
                     boss.current_minigame.destroy_all()
                 continue
 
-            # Всегда обновляем атаку (для частиц)
             if boss.current_minigame:
                 boss.current_minigame.update()
 
-            # --- ФАЗА: АКТИВНАЯ АТАКА ---
             if switch_phase == PHASE_ATTACK:
                 attack_timer += clock.get_time()
 
-                # Реплики
                 quote_timer += clock.get_time()
                 if quote_timer >= quote_interval and dialogue_cooldown <= 0:
                     quote_timer = 0
@@ -381,16 +375,12 @@ def main():
                     dialogue_cooldown = dialogue_cooldown_time
                     play_boss_sound()
 
-                # Пора менять атаку?
                 if attack_timer >= attack_duration:
-                    # Останавливаем спавн
                     if hasattr(boss.current_minigame, 'stop_spawning'):
                         boss.current_minigame.stop_spawning()
-                    # Запускаем распад
                     if hasattr(boss.current_minigame, 'destroy_all'):
                         boss.current_minigame.destroy_all()
 
-                    # Выбираем следующую атаку
                     available = boss.patterns[boss.phase].copy()
                     if current_attack_name in available and len(available) > 1:
                         available.remove(current_attack_name)
@@ -404,18 +394,15 @@ def main():
                         dialogue_cooldown = dialogue_cooldown_time
                         play_boss_sound()
 
-            # --- ФАЗА: РАСПАД ---
             elif switch_phase == PHASE_DESTROY:
                 switch_timer += clock.get_time()
                 if switch_timer >= DESTROY_TIME:
                     switch_phase = PHASE_PAUSE
                     switch_timer = 0
 
-            # --- ФАЗА: ПАУЗА ---
             elif switch_phase == PHASE_PAUSE:
                 switch_timer += clock.get_time()
                 if switch_timer >= PAUSE_TIME:
-                    # Запускаем новую атаку
                     new_minigame = create_attack(next_attack_name)
                     current_attack_name = next_attack_name
                     boss.start_attack(next_attack_name, new_minigame)
@@ -434,9 +421,6 @@ def main():
                 battle_ui.set_main_buttons_y(original_buttons_y)
                 battle_ui.enable_input()
                 reset_player_position()
-                boss.show_dialogue(["Отлично, студент!", "Выбирай действие!"])
-                dialogue_cooldown = dialogue_cooldown_time
-                play_boss_sound()
                 boss.end_attack()
                 current_state = STATE_MAIN
                 end_phase = False
@@ -447,6 +431,7 @@ def main():
             boss.show_dialogue(["Ты проиграл..."])
             play_boss_sound()
             pg.time.wait(3000)
+            victory = False
             running = False
 
         # Отрисовка
@@ -477,8 +462,9 @@ def main():
         pg.display.flip()
         clock.tick(60)
 
-    pg.quit()
-    sys.exit()
+    # Останавливаем музыку после боя
+    pg.mixer.music.stop()
+    return victory
 
 
 boss_phase_hints = {
@@ -486,6 +472,3 @@ boss_phase_hints = {
     2: "Добавлены комбо-атаки!",
     3: "Финальная фаза!"
 }
-
-if __name__ == "__main__":
-    main()

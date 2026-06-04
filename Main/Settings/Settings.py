@@ -1,5 +1,5 @@
-import pygame as pg
-pg.init()
+import Dvishok as pg
+# pg.init()
 
 # Иконка главная
 MAIN_ICON_IMG = pg.image.load("../Images/MainIcon.png")

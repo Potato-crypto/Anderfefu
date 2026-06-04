@@ -1,6 +1,3 @@
-# Ivanov_battle.py
-# Второй уровень: бой с Ивановым с атаками (мини-играми)
-
 import pygame as pg
 import sys
 import random
